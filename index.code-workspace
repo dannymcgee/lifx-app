@@ -1,0 +1,23 @@
+{
+	"folders": [{
+		"name": "Workspace Root",
+		"path": "."
+	}, {
+		"name": "main",
+		"path": "apps/main"
+	}, {
+		"name": "renderer",
+		"path": "apps/renderer"
+	}, {
+		"name": "back-end",
+		"path": "apps/back-end"
+	}],
+	"settings": {
+		"jest.disabledWorkspaceFolders": [
+			"main",
+			"renderer",
+			"back-end"
+		],
+		"typescript.tsdk": "Workspace Root/node_modules/typescript/lib"
+	}
+}
