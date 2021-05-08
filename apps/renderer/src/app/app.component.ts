@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { ElectronService } from "./electron.service";
 
 @Component({
-	selector: "daw-root",
+	selector: "lifx-root",
 	template: `
 		<button (click)="hello()">Say Hello</button>
 	`,

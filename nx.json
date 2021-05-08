@@ -9,7 +9,7 @@
 	"affected": {
 		"defaultBase": "main"
 	},
-	"npmScope": "daw",
+	"npmScope": "lifx",
 	"tasksRunnerOptions": {
 		"default": {
 			"runner": "@nrwl/nx-cloud",
