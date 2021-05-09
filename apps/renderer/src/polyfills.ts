@@ -63,10 +63,12 @@ import "zone.js/dist/zone"; // Included with Angular CLI.
  * APPLICATION IMPORTS
  */
 
+import { Bulb } from "@lifx/api";
+
 declare global {
 	var electron: {
 		getAppVersion(): Promise<string>,
-		send(message: string): Promise<string>,
+		discovery(): Promise<Bulb[]>,
 		platform: string;
 	}
 }

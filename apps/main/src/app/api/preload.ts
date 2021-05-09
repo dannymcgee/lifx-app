@@ -1,6 +1,8 @@
 import { contextBridge, ipcRenderer } from "electron";
 
+import { Bulb, Channel } from "@lifx/api";
+
 contextBridge.exposeInMainWorld("electron", {
 	getAppVersion: () => ipcRenderer.invoke("get-app-version"),
-	send: (message: string) => ipcRenderer.invoke("message", message),
+	discovery: (): Promise<Bulb[]> => ipcRenderer.invoke(Channel.Discovery),
 });

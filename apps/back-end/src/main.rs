@@ -49,7 +49,7 @@ fn dispatch(
 			};
 			let response = serde_json::to_string(&res_msg)?;
 
-			write!(stdout, "{}", response).expect("Failed to write to stdout!");
+			writeln!(stdout, "{}", response).expect("Failed to write to stdout!");
 		}
 		Err(err) => {
 			eprintln!("{}", err)

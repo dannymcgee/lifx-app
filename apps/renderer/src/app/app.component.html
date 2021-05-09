@@ -1,17 +1,20 @@
-<button [disabled]="loading"
-	(click)="discover()"
->
-	{{ groups ? 'Refresh' : 'Discover' }}
-</button>
+<ng-container *ngIf="(groups$ | async) as groups">
+<ng-container *ngIf="(bulbs$ | async) as bulbs">
+
 <span *ngIf="loading">Loading...</span>
 
 <section *ngFor="let group of groups">
 	<h3>{{ group }}</h3>
 	<ul>
-		<li *ngFor="let bulb of bulbs.get(group)">
+		<li *ngFor="let bulb of bulbs[group]
+				trackBy: trackById"
+		>
 			<strong>{{ bulb.name }}</strong>
-			{{ bulb.color?.Single?.brightness | percent }}
-			{{ bulb.color?.Single?.kelvin }}
+			{{ $any(bulb.color)?.Single?.brightness | percent }}
+			{{ $any(bulb.color)?.Single?.kelvin }}
 		</li>
 	</ul>
 </section>
+
+</ng-container>
+</ng-container>

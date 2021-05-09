@@ -1,36 +1,58 @@
-import { Component } from "@angular/core";
-import { LifxService } from "./electron.service";
+import { Component, OnInit, TrackByFunction } from "@angular/core";
+
+import { Observable } from "rxjs";
+import { first, scan } from "rxjs/operators";
+
+import { Bulb } from "@lifx/api";
+import { LifxService } from "./lifx.service";
 
 @Component({
 	selector: "lifx-root",
 	templateUrl: "./app.component.html",
 	styleUrls: ["./app.component.scss"],
 })
-export class AppComponent {
-	groups?: string[];
-	bulbs = new Map<string, any[]>();
-	loading = false;
+export class AppComponent implements OnInit {
+	groups$?: Observable<string[]>;
+	bulbs$?: Observable<Record<string, Bulb[]>>;
+	loading = true;
 
 	constructor(
 		private _lifx: LifxService,
 	) {}
 
-	async discover() {
-		this.loading = true;
-		let bulbs = await this._lifx.discover();
+	async ngOnInit() {
+		let bulbs$ = this._lifx.discover();
 
-		this.groups = bulbs
-			.map(b => b.group)
-			.reduce((accum, curr) => {
-				if (!accum.includes(curr))
-					accum.push(curr)
-				return accum;
-			}, []);
+		bulbs$.pipe(first()).subscribe(() => {
+			this.loading = false;
+		});
 
-		this.groups.forEach(g => this.bulbs.set(g, []));
+		this.groups$ = bulbs$.pipe(
+			scan((acc, curr) => {
+				curr.forEach(b => {
+					if (!b.group) return;
+					if (!acc.includes(b.group)) acc.push(b.group);
+				});
+				return acc;
+			}, []),
+		);
 
-		bulbs.forEach(b => this.bulbs.get(b.group)?.push(b));
+		this.bulbs$ = bulbs$.pipe(
+			scan((acc, curr) => {
+				curr.forEach(bulb => {
+					if (!bulb.group) return;
+					if (!acc[bulb.group]) acc[bulb.group] = [];
 
-		this.loading = false;
+					let arr: Bulb[] = acc[bulb.group];
+					let idx = arr.findIndex(b => b.id === bulb.id);
+
+					if (idx !== -1) arr[idx] = bulb;
+					else arr.push(bulb);
+				});
+				return acc;
+			}, {}),
+		);
 	}
+
+	trackById: TrackByFunction<Bulb> = (_, bulb) => bulb.id;
 }

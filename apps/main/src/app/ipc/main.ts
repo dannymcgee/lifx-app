@@ -2,12 +2,14 @@ import cp from "child_process";
 import path from "path";
 import { ipcMain } from "electron";
 
-import { Message } from "@lifx/api";
+import { Channel } from "@lifx/api";
+import { StreamAdapter } from "./stream-adapter";
 
 const BACKEND_EXE_PATH = "apps/back-end/target/debug/back-end.exe";
 
 namespace ipc {
 	let proc: cp.ChildProcess;
+	let adapter: StreamAdapter;
 
 	export function init() {
 		let exe = path.resolve(process.cwd(), BACKEND_EXE_PATH);
@@ -22,26 +24,12 @@ namespace ipc {
 			.on("exit", onChildExit)
 			.on("error", onChildErr)
 
-		ipcMain.handle("message", (_, message) => send(message));
-	}
+		adapter = new StreamAdapter(proc.stdin, proc.stdout);
 
-	async function send(message: string) {
-		return new Promise<string>((resolve, reject) => {
-			let req = JSON.parse(message) as Message;
-			const callback = (buf: Buffer) => {
-				let str = buf.toString();
-				let res = JSON.parse(str) as Message;
-
-				if (res.channel === req.channel) {
-					proc.stdout.off("data", callback);
-					resolve(str);
-				}
-			}
-
-			proc.stdout.on("data", callback);
-			proc.stdin.write(`${message}\n`, (err) => {
-				if (err) reject(err);
-			});
+		ipcMain.handle(Channel.Discovery, () => {
+			return adapter
+				.send(Channel.Discovery)
+				.recv(Channel.Discovery).toPromise();
 		});
 	}
 
