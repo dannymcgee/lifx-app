@@ -11,12 +11,16 @@
 	}, {
 		"name": "back-end",
 		"path": "apps/back-end"
+	}, {
+		"name": "api",
+		"path": "libs/api"
 	}],
 	"settings": {
 		"jest.disabledWorkspaceFolders": [
 			"main",
 			"renderer",
-			"back-end"
+			"back-end",
+			"api",
 		],
 		"typescript.tsdk": "Workspace Root/node_modules/typescript/lib"
 	}

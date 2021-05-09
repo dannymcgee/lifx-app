@@ -1,7 +1,8 @@
 import cp from "child_process";
 import path from "path";
-
 import { ipcMain } from "electron";
+
+import { Message } from "@lifx/api";
 
 const BACKEND_EXE_PATH = "apps/back-end/target/debug/back-end.exe";
 
@@ -26,9 +27,18 @@ namespace ipc {
 
 	async function send(message: string) {
 		return new Promise<string>((resolve, reject) => {
-			proc.stdout.once("data", (buf: Buffer) => {
-				resolve(buf.toString())
-			});
+			let req = JSON.parse(message) as Message;
+			const callback = (buf: Buffer) => {
+				let str = buf.toString();
+				let res = JSON.parse(str) as Message;
+
+				if (res.channel === req.channel) {
+					proc.stdout.off("data", callback);
+					resolve(str);
+				}
+			}
+
+			proc.stdout.on("data", callback);
 			proc.stdin.write(`${message}\n`, (err) => {
 				if (err) reject(err);
 			});

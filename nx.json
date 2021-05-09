@@ -1,25 +1,15 @@
 {
 	"implicitDependencies": {
-		"package.json": {
-			"dependencies": "*",
-			"devDependencies": "*"
-		},
+		"package.json": { "dependencies": "*", "devDependencies": "*" },
 		".eslintrc.json": "*"
 	},
-	"affected": {
-		"defaultBase": "main"
-	},
+	"affected": { "defaultBase": "main" },
 	"npmScope": "lifx",
 	"tasksRunnerOptions": {
 		"default": {
 			"runner": "@nrwl/nx-cloud",
 			"options": {
-				"cacheableOperations": [
-					"build",
-					"lint",
-					"test",
-					"e2e"
-				],
+				"cacheableOperations": ["build", "lint", "test", "e2e"],
 				"accessToken": "MzRlMTM0ZGMtNzI5Yy00YWUzLWE3NmUtMDJkNzczMjQ5ZjU2fHJlYWQtd3JpdGU=",
 				"canTrackAnalytics": false,
 				"showUsageWarnings": true
@@ -27,19 +17,10 @@
 		}
 	},
 	"projects": {
-		"renderer": {
-			"tags": []
-		},
-		"renderer-e2e": {
-			"tags": [],
-			"implicitDependencies": ["renderer"]
-		},
-		"main": {
-			"tags": [],
-			"implicitDependencies": ["renderer"]
-		},
-		"back-end": {
-			"tags": []
-		}
+		"renderer": { "tags": [] },
+		"renderer-e2e": { "tags": [], "implicitDependencies": ["renderer"] },
+		"main": { "tags": [], "implicitDependencies": ["renderer"] },
+		"back-end": { "tags": [] },
+		"api": { "tags": [] }
 	}
 }

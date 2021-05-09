@@ -1,0 +1,17 @@
+<button [disabled]="loading"
+	(click)="discover()"
+>
+	{{ groups ? 'Refresh' : 'Discover' }}
+</button>
+<span *ngIf="loading">Loading...</span>
+
+<section *ngFor="let group of groups">
+	<h3>{{ group }}</h3>
+	<ul>
+		<li *ngFor="let bulb of bulbs.get(group)">
+			<strong>{{ bulb.name }}</strong>
+			{{ bulb.color?.Single?.brightness | percent }}
+			{{ bulb.color?.Single?.kelvin }}
+		</li>
+	</ul>
+</section>
