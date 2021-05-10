@@ -1,3 +1,17 @@
 * {
 	font-family: sans-serif;
 }
+
+pre {
+	font-family: monospace;
+	font-size: 12px;
+	line-height: 1;
+	max-height: 12px * 8;
+	overflow-y: auto;
+	background: #eee;
+}
+
+em {
+	font-size: 12px;
+	color: #aaa;
+}

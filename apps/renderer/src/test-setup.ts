@@ -1,18 +1,17 @@
 import "jest-preset-angular";
-import { Observable, of } from "rxjs";
 import { Bulb } from "@lifx/api";
 
 declare global {
 	var electron: {
 		getAppVersion(): Promise<string>,
-		discovery(): Observable<Bulb[]>,
+		discovery(): Promise<Bulb[]>,
 		platform: string;
 	}
 }
 
 const electron: PropertyDescriptor["value"] = {
 	getAppVersion: async () => "",
-	discovery: (_: string) => of([]),
+	discovery: async (_: string) => [],
 	platform: "Jest",
 }
 

@@ -1,10 +1,12 @@
 export interface Message {
 	channel: Channel;
-	payload?: Payload;
+	payload?: Request|Response;
 }
 
 export enum Channel {
 	Discovery = "Discovery",
+	GetColor = "GetColor",
+	SetColor = "SetColor",
 }
 
 export enum PowerLevel {
@@ -12,11 +14,13 @@ export enum PowerLevel {
 	Enabled,
 }
 
-export interface HSBK {
+export type HSBK = {
 	hue: number;
 	saturation: number;
 	brightness: number;
+} | {
 	kelvin: number;
+	brightness: number;
 }
 
 export interface Bulb {
@@ -31,4 +35,23 @@ export interface Bulb {
 	color: HSBK | HSBK[];
 }
 
-export type Payload = Bulb[];
+export interface Request {
+	[Channel.Discovery]?: null;
+	[Channel.GetColor]?: {
+		id: number;
+	};
+	[Channel.SetColor]?: {
+		id: number;
+		color: HSBK;
+	};
+}
+
+export interface Response {
+	[Channel.Discovery]?: Bulb[];
+	[Channel.GetColor]?: {
+		id: number;
+		color: HSBK;
+	};
+	[Channel.SetColor]?: null;
+}
+

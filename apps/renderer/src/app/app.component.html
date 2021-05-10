@@ -10,8 +10,13 @@
 				trackBy: trackById"
 		>
 			<strong>{{ bulb.name }}</strong>
-			{{ $any(bulb.color)?.Single?.brightness | percent }}
-			{{ $any(bulb.color)?.Single?.kelvin }}
+			{{ $any(bulb.color)?.brightness | percent }}
+			{{ $any(bulb.color)?.kelvin }}
+			<em>Last seen {{
+				bulb.lastSeen | date : 'HH:mm'
+			}} ({{
+				bulb.lastSeen | relative
+			}})</em>
 		</li>
 	</ul>
 </section>

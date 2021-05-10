@@ -17,12 +17,12 @@ namespace ipc {
 			stdio: [
 				"pipe",
 				"pipe",
-				process.stderr,
-			]
+				"inherit",
+			],
 		})
 			.on("close", onChildClose)
 			.on("exit", onChildExit)
-			.on("error", onChildErr)
+			.on("error", onChildErr);
 
 		adapter = new StreamAdapter(proc.stdin, proc.stdout);
 

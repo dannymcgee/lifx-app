@@ -60,6 +60,7 @@
 		"@types/node": "12.20.12",
 		"chokidar": "^3.5.1",
 		"cypress": "^6.0.1",
+		"date-fns": "^2.21.3",
 		"dotenv": "8.2.0",
 		"electron": "^11.3.0",
 		"exitzero": "^1.0.1",

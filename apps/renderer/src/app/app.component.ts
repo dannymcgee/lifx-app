@@ -1,7 +1,7 @@
-import { Component, OnInit, TrackByFunction } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, TrackByFunction } from "@angular/core";
 
-import { Observable } from "rxjs";
-import { first, scan } from "rxjs/operators";
+import { interval, Observable, Subject } from "rxjs";
+import { first, scan, takeUntil } from "rxjs/operators";
 
 import { Bulb } from "@lifx/api";
 import { LifxService } from "./lifx.service";
@@ -11,12 +11,15 @@ import { LifxService } from "./lifx.service";
 	templateUrl: "./app.component.html",
 	styleUrls: ["./app.component.scss"],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 	groups$?: Observable<string[]>;
 	bulbs$?: Observable<Record<string, Bulb[]>>;
 	loading = true;
 
+	private _onDestroy$ = new Subject<void>();
+
 	constructor(
+		private _changeDetector: ChangeDetectorRef,
 		private _lifx: LifxService,
 	) {}
 
@@ -52,6 +55,17 @@ export class AppComponent implements OnInit {
 				return acc;
 			}, {}),
 		);
+
+		interval(1000)
+			.pipe(takeUntil(this._onDestroy$))
+			.subscribe(() => {
+				this._changeDetector.markForCheck();
+			});
+	}
+
+	ngOnDestroy() {
+		this._onDestroy$.next();
+		this._onDestroy$.complete();
 	}
 
 	trackById: TrackByFunction<Bulb> = (_, bulb) => bulb.id;
