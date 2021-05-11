@@ -199,17 +199,26 @@
 			"sourceRoot": "libs/api/src",
 			"projectType": "library",
 			"architect": {
-				"lint": {
-					"builder": "@nrwl/linter:eslint",
-					"options": {
-						"lintFilePatterns": ["libs/api/**/*.ts"]
-					}
-				},
 				"test": {
 					"builder": "@nrwl/jest:jest",
 					"outputs": ["coverage/libs/api"],
 					"options": {
 						"jestConfig": "libs/api/jest.config.js",
+						"passWithNoTests": true
+					}
+				}
+			}
+		},
+		"std": {
+			"root": "libs/std",
+			"sourceRoot": "libs/std/src",
+			"projectType": "library",
+			"architect": {
+				"test": {
+					"builder": "@nrwl/jest:jest",
+					"outputs": ["coverage/libs/std"],
+					"options": {
+						"jestConfig": "libs/std/jest.config.js",
 						"passWithNoTests": true
 					}
 				}

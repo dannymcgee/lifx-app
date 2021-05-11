@@ -14,6 +14,9 @@
 	}, {
 		"name": "api",
 		"path": "libs/api"
+	}, {
+		"name": "std",
+		"path": "libs/std"
 	}],
 	"settings": {
 		"jest.disabledWorkspaceFolders": [

@@ -21,6 +21,7 @@
 		"renderer-e2e": { "tags": [], "implicitDependencies": ["renderer"] },
 		"main": { "tags": [], "implicitDependencies": ["renderer"] },
 		"back-end": { "tags": [] },
-		"api": { "tags": [] }
+		"api": { "tags": [] },
+		"std": { "tags": [] }
 	}
 }

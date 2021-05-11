@@ -13,37 +13,50 @@ import {
 	Request,
 	Response,
 } from "@lifx/api";
+import { eq, Queue } from "@lifx/std";
 
 const NANOS_IN_SEC = 1_000_000_000;
 
 export class StreamAdapter {
 	private _stream$ = new Subject<Message>();
 	private _stdin: Writable;
+	private _backlog: Record<Channel, Queue<Request>> = {
+		[Channel.Discovery]: new Queue(1),
+		[Channel.GetColor]: new Queue(1),
+		[Channel.SetColor]: new Queue(1),
+	};
+	private _pending = {
+		[Channel.Discovery]: 0,
+		[Channel.GetColor]: 0,
+		[Channel.SetColor]: 0,
+	};
 
 	constructor(
 		stdin: Writable,
 		stdout: Readable,
 	) {
 		this._stdin = stdin;
-
-		stdout.on("data", (buf: Buffer) => {
-			let data = buf.toString();
-			let msg: Message;
-
-			try {
-				msg = JSON.parse(data) as Message;
-			}
-			catch (err) {
-				console.log("Error parsing message from back-end:");
-				console.log(data);
-				msg = null;
-			}
-
-			if (msg) this._stream$.next(msg);
-		});
+		stdout.on("data", this._onStdout);
+		setTimeout(this._processBacklog);
 	}
 
-	send(channel: Channel, payload?: Request[typeof channel]): StreamAdapter {
+	send(channel: Channel, payload?: Request): StreamAdapter {
+		// Handle back-pressure
+		if (this._pending[channel]) {
+			let backlog = this._backlog[channel];
+			// Ignore duplicate requests
+			if (eq(payload, backlog.peek())) return this;
+
+			backlog.enqueue(payload ?? null);
+			console.log(`WARNING: ${
+				this._backlog[channel].size
+			} messages in backlog for ${channel}`);
+
+			return this;
+		}
+
+		++this._pending[channel];
+
 		let msg = JSON.stringify({
 			channel,
 			payload: payload ?? null,
@@ -76,6 +89,38 @@ export class StreamAdapter {
 
 	recv(channel: any) {
 		return this.recvAll(channel).pipe(first()) as any;
+	}
+
+	private _processBacklog = () => {
+		Object.entries(this._pending)
+			.forEach(([chan, count]: [Channel, number]) => {
+				if (count) return;
+
+				let backlog = this._backlog[chan];
+				if (!backlog.size) return;
+
+				this.send(chan, backlog.dequeue());
+			});
+
+		setTimeout(this._processBacklog);
+	}
+
+	private _onStdout = (buf: Buffer) => {
+		let data = buf.toString();
+		let msg: Message;
+
+		try {
+			msg = JSON.parse(data) as Message;
+		} catch (err) {
+			console.log("Error parsing message from back-end:");
+			console.log(data);
+			msg = null;
+		}
+
+		if (msg) {
+			--this._pending[msg.channel];
+			this._stream$.next(msg);
+		}
 	}
 
 	private _fmt(chan: Channel, payload: any) {

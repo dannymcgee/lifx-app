@@ -15,7 +15,8 @@
 		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
-			"@lifx/api": ["libs/api/src/index.ts"]
+			"@lifx/api": ["libs/api/src/index.ts"],
+			"@lifx/std": ["libs/std/src/index.ts"]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]
