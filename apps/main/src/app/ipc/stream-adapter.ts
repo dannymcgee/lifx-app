@@ -2,6 +2,7 @@ import { Observable, Subject } from "rxjs";
 import { filter, first, map } from "rxjs/operators";
 import { Readable, Writable } from "stream";
 import chalk from "chalk";
+import cp from "child_process";
 import sub from "date-fns/sub";
 
 import {
@@ -17,30 +18,38 @@ import { eq, Queue } from "@lifx/std";
 
 const NANOS_IN_SEC = 1_000_000_000;
 
-export class StreamAdapter {
-	private _stream$ = new Subject<Message>();
-	private _stdin: Writable;
+export class IpcPipe {
+	private _input: Readable;
+	private _output: Writable;
+	private _input$ = new Subject<Message>();
+
 	private _backlog: Record<Channel, Queue<Request>> = {
 		[Channel.Discovery]: new Queue(1),
 		[Channel.GetColor]: new Queue(1),
 		[Channel.SetColor]: new Queue(1),
 	};
-	private _pending = {
+
+	private _pending: Record<Channel, number> = {
 		[Channel.Discovery]: 0,
 		[Channel.GetColor]: 0,
 		[Channel.SetColor]: 0,
 	};
 
-	constructor(
-		stdin: Writable,
-		stdout: Readable,
-	) {
-		this._stdin = stdin;
-		stdout.on("data", this._onStdout);
-		setTimeout(this._processBacklog);
+	constructor(exePath: string) {
+		let proc = cp.spawn(exePath, {
+			stdio: ["pipe", "pipe", "inherit"],
+		})
+			.on("close", this._onClose)
+			.on("exit", this._onExit)
+			.on("error", this._onError);
+
+		this._input = proc.stdout;
+		this._output = proc.stdin;
+
+		this._input.on("data", this._parseInput);
 	}
 
-	send(channel: Channel, payload?: Request): StreamAdapter {
+	send(channel: Channel, payload?: Request): this {
 		// Handle back-pressure
 		if (this._pending[channel]) {
 			let backlog = this._backlog[channel];
@@ -62,7 +71,7 @@ export class StreamAdapter {
 			payload: payload ?? null,
 		});
 
-		this._stdin.write(msg + "\n", (err?: Error) => {
+		this._output.write(msg + "\n", (err?: Error) => {
 			if (err) {
 				console.log(chalk.bold.redBright(err.message));
 				console.log(chalk.bold.red(err.stack));
@@ -77,7 +86,7 @@ export class StreamAdapter {
 	recvAll(channel: Channel.SetColor): Observable<Response[Channel.SetColor]>;
 
 	recvAll(chan: any) {
-		return this._stream$.pipe(
+		return this._input$.pipe(
 			filter(msg => msg.channel === chan),
 			map(msg => this._fmt(chan, msg.payload)),
 		) as any;
@@ -105,12 +114,12 @@ export class StreamAdapter {
 		setTimeout(this._processBacklog);
 	}
 
-	private _onStdout = (buf: Buffer) => {
+	private _parseInput = (buf: Buffer) => {
 		let data = buf.toString();
 		let msg: Message;
 
 		try {
-			msg = JSON.parse(data) as Message;
+			msg = JSON.parse(data);
 		} catch (err) {
 			console.log("Error parsing message from back-end:");
 			console.log(data);
@@ -119,7 +128,7 @@ export class StreamAdapter {
 
 		if (msg) {
 			--this._pending[msg.channel];
-			this._stream$.next(msg);
+			this._input$.next(msg);
 		}
 	}
 
@@ -179,5 +188,17 @@ export class StreamAdapter {
 		else if (data.Multiple) {
 			return data.Multiple.map(c => this._fmtColor({ Single: c }))
 		}
+	}
+
+	private _onClose = (code: number, signal: NodeJS.Signals|null) => {
+		console.log("onClose:", { code, signal });
+	}
+
+	private _onExit = (code: number|null, signal: NodeJS.Signals|null) => {
+		console.log("onExit:", { code, signal });
+	}
+
+	private _onError = (err: Error) => {
+		console.log("onError:", { err });
 	}
 }
