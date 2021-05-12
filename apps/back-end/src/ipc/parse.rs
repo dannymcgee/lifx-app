@@ -1,5 +1,5 @@
 use anyhow::Result;
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 use crate::{
 	Error,
@@ -8,44 +8,71 @@ use crate::{
 
 pub fn parse(input: &str) -> Result<Request> {
 	let req: Value = serde_json::from_str(input)?;
+
 	let channel = match &req["channel"] {
 		Value::String(ch) if ch == "Discovery" => Ok(Channel::Discovery),
 		Value::String(ch) if ch == "GetColor"  => Ok(Channel::GetColor),
 		Value::String(ch) if ch == "SetColor"  => Ok(Channel::SetColor),
-		other => Err(Error(format!("Expected channel but received {:?}", other))),
+		other => Err(Error(format!("Expected channel, received {:?}", other))),
 	}?;
-	let payload = match &req["payload"] {
-		Value::Null => Ok(None),
-		Value::Object(payload) => match &channel {
-			Channel::GetColor => parse_get_color_payload(payload),
-			Channel::SetColor => parse_set_color_payload(payload),
-			other => Err(Error(format!("Expected payload, received {:?}", other)).into()),
-		},
-		other => Err(Error(format!("Expected payload, received {:?}", other)).into()),
+
+	let p = req.get("payload");
+	let payload = match channel {
+		Channel::Discovery => parse_discovery_payload(p),
+		Channel::GetColor  => parse_get_color_payload(p),
+		Channel::SetColor  => parse_set_color_payload(p),
 	}?;
 
 	Ok(Request { channel, payload })
 }
 
-fn parse_get_color_payload(payload: &Map<String, Value>) -> Result<Option<RequestPayload>> {
+fn parse_discovery_payload(value: Option<&Value>) -> Result<Option<RequestPayload>> {
+	match &value {
+		Some(Value::Null) | None => Ok(None),
+		_ => Err(Error(
+			"Received unexpected payload for Discovery request".to_string()
+		).into()),
+	}
+}
+
+fn parse_get_color_payload(value: Option<&Value>) -> Result<Option<RequestPayload>> {
+	use Value::Object;
+	let payload = if let Some(Object(obj)) = value { obj } else { unreachable!() };
 	let id = parse_id(payload.get("id"))?;
+
 	Ok(Some(RequestPayload::GetColor { id }))
 }
 
-fn parse_set_color_payload(payload: &Map<String, Value>) -> Result<Option<RequestPayload>> {
-	let id = parse_id(payload.get("id"))?;
-	let color = parse_color(payload.get("color"))?;
-	Ok(Some(RequestPayload::SetColor { id, color }))
+fn parse_set_color_payload(value: Option<&Value>) -> Result<Option<RequestPayload>> {
+	use Value::{Object, String};
+	let payload = if let Some(Object(obj)) = value {
+		Ok(obj)
+	} else {
+		Err(Error(format!("Expected Record<id, color>, received {:?}", value)))
+	}?;
+
+	let payload = payload.iter()
+		.map(|(id, color)| {
+			let id = parse_id(Some(&String(id.clone()))).unwrap();
+			let color = parse_color(Some(color)).unwrap();
+
+			(id, color)
+		})
+		.collect();
+
+	Ok(Some(RequestPayload::SetColor(payload)))
 }
 
-fn parse_id(id: Option<&Value>) -> Result<u64> {
-	match id {
-		Some(Value::String(id)) => {
-			u64::from_str_radix(&id[2..], 16)
-				.map_err(|err| err.into())
-		},
-		other => Err(Error(format!("Expected id, received {:?}", other)).into()),
-	}
+fn parse_id(value: Option<&Value>) -> Result<u64> {
+	use Value::String;
+	let id = if let Some(String(s)) = value {
+		Ok(s)
+	} else {
+		Err(Error(format!("Expected string, received {:?}", value)))
+	}?;
+	let parsed = u64::from_str_radix(&id[2..], 16)?;
+
+	Ok(parsed)
 }
 
 fn parse_color(color: Option<&Value>) -> Result<HSBK> {

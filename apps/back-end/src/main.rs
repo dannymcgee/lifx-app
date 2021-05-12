@@ -69,23 +69,23 @@ fn get_color(_mgr: &mut Manager, _msg: &RequestPayload) -> Result<Response> {
 
 fn set_color(mgr: &mut Manager, msg: &RequestPayload) -> Result<Response> {
 	let bulbs = mgr.bulbs.lock().expect("Failed to lock bulbs for writing");
-	if let RequestPayload::SetColor { id, color } = msg {
-		// Send the instruction to the light
-		let duration = Duration::from_millis(250);
+	let targets = if let RequestPayload::SetColor(x) = msg { x } else { unreachable!() };
+	let duration = Duration::from_millis(250);
+
+	for (id, color) in targets.iter() {
 		bulbs[id].set_color((*color).into(), duration)?;
-
-		thread::sleep(duration);
-
-		// Acknowledge the request
-		Ok(Response {
-			channel: Channel::SetColor,
-			payload: ResponsePayload::SetColor {
-				id: format!("{:#018x}", id),
-			}
-		})
-	} else {
-		Err(Error(format!("Expected SetColor payload, received {:?}", msg)).into())
 	}
+
+	thread::sleep(duration);
+
+	let ids: Vec<String> = targets.iter()
+		.map(|(id, _)| format!("{:#018x}", id))
+		.collect();
+
+	Ok(Response {
+		channel: Channel::SetColor,
+		payload: ResponsePayload::SetColor(ids),
+	})
 }
 
 #[derive(thiserror::Error, Debug)]

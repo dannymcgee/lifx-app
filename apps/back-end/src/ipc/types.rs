@@ -1,5 +1,8 @@
-use std::{net::SocketAddr, time::{Duration, Instant}};
-
+use std::{
+	collections::HashMap,
+	net::SocketAddr,
+	time::{Duration, Instant},
+};
 use lifx::PowerLevel;
 use serde::{Serialize, Deserialize};
 
@@ -24,13 +27,8 @@ pub enum Channel {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum RequestPayload {
-	GetColor {
-		id: u64,
-	},
-	SetColor {
-		id: u64,
-		color: HSBK,
-	}
+	GetColor { id: u64 },
+	SetColor(HashMap<u64, HSBK>),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -40,9 +38,7 @@ pub enum ResponsePayload {
 		id: String,
 		color: HSBK,
 	},
-	SetColor {
-		id: String,
-	}
+	SetColor(Vec<String>),
 }
 
 #[derive(Debug, Serialize, Deserialize)]

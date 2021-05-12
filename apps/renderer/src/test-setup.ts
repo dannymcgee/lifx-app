@@ -1,14 +1,8 @@
 import "jest-preset-angular";
-import { Bulb, HSBK } from "@lifx/api";
+import { ElectronIPC } from "@lifx/api";
 
 declare global {
-	var electron: {
-		platform: string;
-		getAppVersion(): Promise<string>;
-		discovery(): Promise<Bulb[]>;
-		getColor(id: string): Promise<HSBK>;
-		setColor(id: string, color: HSBK): Promise<void>;
-	}
+	var electron: ElectronIPC;
 }
 
 const electron: PropertyDescriptor["value"] = {

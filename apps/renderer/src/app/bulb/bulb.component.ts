@@ -21,6 +21,7 @@ import { LifxService } from "../lifx.service";
 export class BulbComponent implements OnChanges, OnDestroy {
 	@HostBinding()
 	@Input() id: string;
+	@Input() locked: boolean;
 
 	_bulb?: Bulb;
 

@@ -145,9 +145,7 @@ export class IpcPipe {
 					color: this._fmtColor(payload[chan].color),
 				};
 			case Channel.SetColor:
-				return {
-					id: payload[chan].id,
-				};
+				return payload[chan];
 			default: {
 				console.log(chalk.bold.redBright(`Unrecognized channel: ${chan}`));
 			}

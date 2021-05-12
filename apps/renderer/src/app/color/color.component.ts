@@ -12,7 +12,7 @@ const U16_MAX = 65_535;
 	styleUrls: ["./color.component.scss"],
 })
 export class ColorComponent implements FormControl<HSBK> {
-	@Input() bulbId: number;
+	@Input() id: string;
 
 	private _value?: HSBK;
 	get value(): HSBK|null { return this._value ?? null; }

@@ -41,13 +41,8 @@ export interface Bulb {
 
 export interface Request {
 	[Channel.Discovery]?: null;
-	[Channel.GetColor]?: {
-		id: string;
-	};
-	[Channel.SetColor]?: {
-		id: string;
-		color: HSBK;
-	};
+	[Channel.GetColor]?: { id: string };
+	[Channel.SetColor]?: Record<string, HSBK>;
 }
 
 export interface Response {
@@ -56,7 +51,13 @@ export interface Response {
 		id: string;
 		color: HSBK;
 	};
-	[Channel.SetColor]?: {
-		id: string;
-	};
+	[Channel.SetColor]?: string[];
+}
+
+export interface ElectronIPC {
+	platform?: string;
+	getAppVersion(): Promise<string>;
+	discovery(): Promise<Bulb[]>;
+	getColor(id: string): Promise<HSBK>;
+	setColor(targets: Record<string, HSBK>): Promise<void>;
 }

@@ -32,7 +32,11 @@ export class LifxService implements OnDestroy {
 	}
 
 	async setColor(id: string, color: HSBK) {
-		await electron.setColor(id, color);
+		await electron.setColor({ [id]: color });
+	}
+
+	async setColors(targets: Record<string, HSBK>) {
+		await electron.setColor(targets);
 	}
 
 	private _initBulbs() {

@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, TrackByFunction } from "@angular/core";
 
-import { interval, Observable, Subject } from "rxjs";
-import { first, scan, takeUntil } from "rxjs/operators";
+import { combineLatest, interval, Observable, Subject } from "rxjs";
+import { first, scan, share, takeUntil } from "rxjs/operators";
 
-import { Bulb } from "@lifx/api";
+import { Bulb, HSBK } from "@lifx/api";
 import { LifxService } from "./lifx.service";
 
 @Component({
@@ -14,7 +14,11 @@ import { LifxService } from "./lifx.service";
 export class AppComponent implements OnInit, OnDestroy {
 	groups$?: Observable<string[]>;
 	bulbs$?: Observable<Record<string, Bulb[]>>;
+
 	loading = true;
+
+	groupLocks: Record<string, boolean> = {};
+	groupColors: Record<string, HSBK> = {};
 
 	private _onDestroy$ = new Subject<void>();
 
@@ -34,7 +38,10 @@ export class AppComponent implements OnInit, OnDestroy {
 			scan((acc, curr) => {
 				curr.forEach(b => {
 					if (!b.group) return;
-					if (!acc.includes(b.group)) acc.push(b.group);
+					if (!acc.includes(b.group)) {
+						acc.push(b.group);
+						this.groupLocks[b.group] = false;
+					}
 				});
 				return acc;
 			}, []),
@@ -56,6 +63,21 @@ export class AppComponent implements OnInit, OnDestroy {
 			}, {}),
 		);
 
+		combineLatest([this.groups$, this.bulbs$])
+			.pipe(takeUntil(this._onDestroy$))
+			.subscribe(([groups, bulbs]) => {
+				groups.forEach(g => {
+					if (this.groupColors[g]) return;
+
+					let color: HSBK = bulbs[g]?.reduce((acc, b) => {
+						if (b.color) return b.color;
+						else return acc as any;
+					}, null);
+
+					this.groupColors[g] = color;
+				});
+			});
+
 		interval(1000)
 			.pipe(takeUntil(this._onDestroy$))
 			.subscribe(() => {
@@ -69,4 +91,19 @@ export class AppComponent implements OnInit, OnDestroy {
 	}
 
 	trackById: TrackByFunction<Bulb> = (_, bulb) => bulb.id;
+
+	async setGroupColor(group: string, color: HSBK) {
+		let bulbIds = (await this.bulbs$
+			.pipe(share(), first())
+			.toPromise())
+			[group]
+			?.map(b => b.id);
+		let targets = bulbIds.reduce((acc, id) => {
+			acc[id] = color;
+			return acc;
+		}, {});
+
+		this.groupColors[group] = { ...color };
+		this._lifx.setColors(targets);
+	}
 }

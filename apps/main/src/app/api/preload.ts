@@ -1,18 +1,19 @@
 import { contextBridge, ipcRenderer } from "electron";
+import { Channel, ElectronIPC } from "@lifx/api";
 
-import { Bulb, Channel, HSBK } from "@lifx/api";
-
-contextBridge.exposeInMainWorld("electron", {
-	getAppVersion(): Promise<string> {
+const api: ElectronIPC = {
+	getAppVersion() {
 		return ipcRenderer.invoke("get-app-version");
 	},
-	discovery(): Promise<Bulb[]> {
+	discovery() {
 		return ipcRenderer.invoke(Channel.Discovery);
 	},
-	getColor(id: number): Promise<HSBK> {
+	getColor(id) {
 		return ipcRenderer.invoke(Channel.GetColor, { id });
 	},
-	setColor(id: number, color: HSBK): Promise<void> {
-		return ipcRenderer.invoke(Channel.SetColor, { id, color });
+	setColor(targets) {
+		return ipcRenderer.invoke(Channel.SetColor, targets);
 	},
-});
+}
+
+contextBridge.exposeInMainWorld("electron", api);

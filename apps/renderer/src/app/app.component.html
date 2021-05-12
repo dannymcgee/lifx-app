@@ -5,12 +5,26 @@
 
 <section *ngFor="let group of groups">
 	<h3>{{ group }}</h3>
+	<label>
+		<input type="checkbox"
+			[(ngModel)]="groupLocks[group]"
+		/>
+		Lock Group
+	</label>
+	<lifx-color *ngIf="groupLocks[group]"
+		[id]="group"
+		[(ngModel)]="groupColors[group]"
+		(ngModelChange)="setGroupColor(group, $event)"
+	></lifx-color>
 	<lifx-bulb
 		*ngFor="let bulb of bulbs[group]
 			trackBy: trackById"
 		[id]="bulb.id"
+		[locked]="groupLocks[group]"
 	></lifx-bulb>
 </section>
+
+<pre>{{ groupColors | json }}</pre>
 
 </ng-container>
 </ng-container>
