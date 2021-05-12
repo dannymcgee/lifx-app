@@ -14,17 +14,21 @@ export enum PowerLevel {
 	Enabled,
 }
 
+export type u16 = number;
+/** Range: 1500-9000 */
+export type Kelvin = number;
+
 export type HSBK = {
-	hue: number;
-	saturation: number;
-	brightness: number;
+	hue: u16;
+	saturation: u16;
+	brightness: u16;
 } | {
-	kelvin: number;
-	brightness: number;
+	kelvin: Kelvin;
+	brightness: u16;
 }
 
 export interface Bulb {
-	id: number;
+	id: string;
 	addr: string;
 	lastSeen: Date;
 	model: [number, number];
@@ -38,10 +42,10 @@ export interface Bulb {
 export interface Request {
 	[Channel.Discovery]?: null;
 	[Channel.GetColor]?: {
-		id: number;
+		id: string;
 	};
 	[Channel.SetColor]?: {
-		id: number;
+		id: string;
 		color: HSBK;
 	};
 }
@@ -49,8 +53,10 @@ export interface Request {
 export interface Response {
 	[Channel.Discovery]?: Bulb[];
 	[Channel.GetColor]?: {
-		id: number;
+		id: string;
 		color: HSBK;
 	};
-	[Channel.SetColor]?: null;
+	[Channel.SetColor]?: {
+		id: string;
+	};
 }

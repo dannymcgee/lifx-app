@@ -24,7 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	) {}
 
 	async ngOnInit() {
-		let bulbs$ = this._lifx.discover();
+		let bulbs$ = this._lifx.bulbs$;
 
 		bulbs$.pipe(first()).subscribe(() => {
 			this.loading = false;

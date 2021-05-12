@@ -4,24 +4,50 @@ use lifx::PowerLevel;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Message {
+pub struct Request {
 	pub channel: Channel,
-	pub payload: Option<Payload>,
+	pub payload: Option<RequestPayload>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Response {
+	pub channel: Channel,
+	pub payload: ResponsePayload,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Channel {
 	Discovery,
+	GetColor,
+	SetColor,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub enum Payload {
-	Discovery(Vec<Bulb>)
+pub enum RequestPayload {
+	GetColor {
+		id: u64,
+	},
+	SetColor {
+		id: u64,
+		color: HSBK,
+	}
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum ResponsePayload {
+	Discovery(Vec<Bulb>),
+	GetColor {
+		id: String,
+		color: HSBK,
+	},
+	SetColor {
+		id: String,
+	}
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Bulb {
-	pub id: u64,
+	pub id: String,
 	pub addr: SocketAddr,
 	pub last_seen: Duration,
 	pub model: Option<(u32, u32)>,
@@ -35,7 +61,7 @@ pub struct Bulb {
 impl From<&lifx::udp::Bulb> for Bulb {
 	fn from(other: &lifx::udp::Bulb) -> Self {
 		Bulb {
-			id: other.target,
+			id: format!("{:#018x}", other.target),
 			addr: other.addr,
 			last_seen: Instant::now() - other.last_seen,
 			model: other.model.data,
@@ -81,20 +107,42 @@ impl From<lifx::udp::Color> for Color {
 	}
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct HSBK {
-	pub hue: f32,
-	pub saturation: f32,
-	pub brightness: f32,
+	pub hue: u16,
+	pub saturation: u16,
+	pub brightness: u16,
 	pub kelvin: u16,
+}
+
+impl From<&lifx::HSBK> for HSBK {
+	fn from(other: &lifx::HSBK) -> Self {
+		Self {
+			hue: other.hue,
+			saturation: other.saturation,
+			brightness: other.brightness,
+			kelvin: other.kelvin,
+		}
+	}
 }
 
 impl From<lifx::HSBK> for HSBK {
 	fn from(other: lifx::HSBK) -> Self {
 		Self {
-			hue: (other.hue as f32 / 65535.0) * 360.0,
-			saturation: other.saturation as f32 / 65535.0,
-			brightness: other.brightness as f32 / 65535.0,
+			hue: other.hue,
+			saturation: other.saturation,
+			brightness: other.brightness,
+			kelvin: other.kelvin,
+		}
+	}
+}
+
+impl From<HSBK> for lifx::HSBK {
+	fn from(other: HSBK) -> Self {
+		Self {
+			hue: other.hue,
+			saturation: other.saturation,
+			brightness: other.brightness,
 			kelvin: other.kelvin,
 		}
 	}

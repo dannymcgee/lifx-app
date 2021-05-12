@@ -5,20 +5,11 @@
 
 <section *ngFor="let group of groups">
 	<h3>{{ group }}</h3>
-	<ul>
-		<li *ngFor="let bulb of bulbs[group]
-				trackBy: trackById"
-		>
-			<strong>{{ bulb.name }}</strong>
-			{{ $any(bulb.color)?.brightness | percent }}
-			{{ $any(bulb.color)?.kelvin }}
-			<em>Last seen {{
-				bulb.lastSeen | date : 'HH:mm'
-			}} ({{
-				bulb.lastSeen | relative
-			}})</em>
-		</li>
-	</ul>
+	<lifx-bulb
+		*ngFor="let bulb of bulbs[group]
+			trackBy: trackById"
+		[id]="bulb.id"
+	></lifx-bulb>
 </section>
 
 </ng-container>

@@ -1,13 +1,13 @@
 use std::{
-	fmt::{self, Display},
+	fmt::{self, Display, Formatter},
 	io::{self, Write},
-	time::{Duration, Instant}
+	thread,
+	time::{Duration, Instant},
 };
 use anyhow::Result;
-use serde_json::Value;
 use lifx::udp::Manager;
 
-use crate::ipc::{Bulb, Payload};
+use crate::ipc::{Bulb, Channel, RequestPayload, Response, ResponsePayload};
 
 mod ipc;
 
@@ -25,58 +25,30 @@ fn main() -> Result<()> {
 
 		let mut input = String::new();
 		match stdin.read_line(&mut input) {
-			Ok(_) => {
-				dispatch(&input, &mut stdout, &mut mgr)?;
-			}
-			Err(err) => {
-				eprintln!("{}", err);
-			}
+			Ok(_) => dispatch(&input, &mut stdout, &mut mgr)?,
+			Err(err) => eprintln!("{}", err),
 		}
 	}
 
 	Ok(())
 }
 
-fn dispatch(
-	raw_msg: &str,
-	stdout: &mut io::Stdout,
-	mgr: &mut Manager,
-) -> Result<()> {
-	match parse(raw_msg) {
-		Ok(msg) => {
-			let res_msg = match msg.channel {
-				ipc::Channel::Discovery => discovery(mgr)?,
-			};
-			let response = serde_json::to_string(&res_msg)?;
+fn dispatch(input: &str, stdout: &mut io::Stdout, mgr: &mut Manager) -> Result<()> {
+	let req = ipc::parse(input)?;
+	let res = match req.channel {
+		Channel::Discovery => discovery(mgr)?,
+		Channel::GetColor  => get_color(mgr, &req.payload.unwrap())?,
+		Channel::SetColor  => set_color(mgr, &req.payload.unwrap())?,
+	};
+	let res_str = serde_json::to_string(&res)?;
 
-			write!(stdout, "{}", response).expect("Failed to write to stdout!");
-			stdout.flush()?;
-		}
-		Err(err) => {
-			eprintln!("{}", err)
-		}
-	}
+	write!(stdout, "{}", res_str)?;
+	stdout.flush()?;
 
 	Ok(())
 }
 
-fn parse(message: &str) -> Result<ipc::Message> {
-	let parsed: Value = serde_json::from_str(message)?;
-
-	let channel = match &parsed["channel"] {
-		Value::String(ch) if ch == "Discovery" => Ok(ipc::Channel::Discovery),
-		other => Err(Error(format!("Expected channel but received {:?}", other))),
-	}?;
-
-	let payload: Option<Payload> = match &parsed["payload"] {
-		Value::Null => Ok(None),
-		other => Err(Error(format!("Expected payload, received {:?}", other))),
-	}?;
-
-	Ok(ipc::Message { channel, payload })
-}
-
-fn discovery(mgr: &mut Manager) -> Result<ipc::Message> {
+fn discovery(mgr: &mut Manager) -> Result<Response> {
 	let bulbs: Vec<Bulb> = if let Ok(bulbs) = mgr.bulbs.lock() {
 		bulbs.iter()
 			.map(|(_, bulb)| bulb.into())
@@ -85,17 +57,42 @@ fn discovery(mgr: &mut Manager) -> Result<ipc::Message> {
 		vec![]
 	};
 
-	Ok(ipc::Message {
-		channel: ipc::Channel::Discovery,
-		payload: Some(Payload::Discovery(bulbs)),
+	Ok(Response {
+		channel: Channel::Discovery,
+		payload: ResponsePayload::Discovery(bulbs),
 	})
 }
 
+fn get_color(_mgr: &mut Manager, _msg: &RequestPayload) -> Result<Response> {
+	unimplemented!()
+}
+
+fn set_color(mgr: &mut Manager, msg: &RequestPayload) -> Result<Response> {
+	let bulbs = mgr.bulbs.lock().expect("Failed to lock bulbs for writing");
+	if let RequestPayload::SetColor { id, color } = msg {
+		// Send the instruction to the light
+		let duration = Duration::from_millis(250);
+		bulbs[id].set_color((*color).into(), duration)?;
+
+		thread::sleep(duration);
+
+		// Acknowledge the request
+		Ok(Response {
+			channel: Channel::SetColor,
+			payload: ResponsePayload::SetColor {
+				id: format!("{:#018x}", id),
+			}
+		})
+	} else {
+		Err(Error(format!("Expected SetColor payload, received {:?}", msg)).into())
+	}
+}
+
 #[derive(thiserror::Error, Debug)]
-struct Error(String);
+pub struct Error(String);
 
 impl Display for Error {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+	fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
 		write!(f, "{}", self.0)
 	}
 }

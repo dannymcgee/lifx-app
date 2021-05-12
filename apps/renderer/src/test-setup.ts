@@ -1,18 +1,22 @@
 import "jest-preset-angular";
-import { Bulb } from "@lifx/api";
+import { Bulb, HSBK } from "@lifx/api";
 
 declare global {
 	var electron: {
-		getAppVersion(): Promise<string>,
-		discovery(): Promise<Bulb[]>,
 		platform: string;
+		getAppVersion(): Promise<string>;
+		discovery(): Promise<Bulb[]>;
+		getColor(id: string): Promise<HSBK>;
+		setColor(id: string, color: HSBK): Promise<void>;
 	}
 }
 
 const electron: PropertyDescriptor["value"] = {
-	getAppVersion: async () => "",
-	discovery: async (_: string) => [],
 	platform: "Jest",
+	getAppVersion: async () => "",
+	discovery: async () => [],
+	getColor: async () => null,
+	setColor: async () => {},
 }
 
 Object.defineProperty(global, "electron", { value: electron });

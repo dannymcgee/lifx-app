@@ -1,24 +1,46 @@
 import path from "path";
 import { ipcMain } from "electron";
+import { noop } from "rxjs";
+import { filter, first, map } from "rxjs/operators";
 
 import { Channel } from "@lifx/api";
-import { IpcPipe } from "./stream-adapter";
+import { IpcPipe } from "./pipe";
 
 const BACKEND_EXE_PATH = "apps/back-end/target/debug/back-end.exe";
 
 namespace ipc {
-	let pipe: IpcPipe;
 
 	export function init() {
 		let exe = path.resolve(process.cwd(), BACKEND_EXE_PATH);
-		pipe = new IpcPipe(exe);
+		let pipe = new IpcPipe(exe);
 
 		ipcMain.handle(Channel.Discovery, () => {
 			return pipe
 				.send(Channel.Discovery)
 				.recv(Channel.Discovery).toPromise();
 		});
+
+		ipcMain.handle(Channel.GetColor, (_, payload) => {
+			return pipe
+				.send(Channel.GetColor, payload)
+				.recvAll(Channel.GetColor).pipe(
+					filter(p => p.id === payload.id),
+					map(p => p.color),
+					first(),
+				).toPromise();
+		});
+
+		ipcMain.handle(Channel.SetColor, (_, payload) => {
+			return pipe
+				.send(Channel.SetColor, payload)
+				.recvAll(Channel.SetColor).pipe(
+					filter(p => p.id === payload.id),
+					map(noop),
+					first(),
+				).toPromise();
+		});
 	}
+
 }
 
 export default ipc;

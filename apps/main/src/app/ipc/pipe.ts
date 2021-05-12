@@ -14,7 +14,8 @@ import {
 	Request,
 	Response,
 } from "@lifx/api";
-import { eq, Queue } from "@lifx/std";
+import { Queue } from "@lifx/std";
+import log from "./log";
 
 const NANOS_IN_SEC = 1_000_000_000;
 
@@ -35,6 +36,10 @@ export class IpcPipe {
 		[Channel.SetColor]: 0,
 	};
 
+	private get _allPending(): number {
+		return Object.values(this._pending).reduce((acc, cur) => acc + cur);
+	}
+
 	constructor(exePath: string) {
 		let proc = cp.spawn(exePath, {
 			stdio: ["pipe", "pipe", "inherit"],
@@ -47,24 +52,21 @@ export class IpcPipe {
 		this._output = proc.stdin;
 
 		this._input.on("data", this._parseInput);
+
+		setTimeout(this._processBacklog);
 	}
 
 	send(channel: Channel, payload?: Request): this {
 		// Handle back-pressure
-		if (this._pending[channel]) {
-			let backlog = this._backlog[channel];
-			// Ignore duplicate requests
-			if (eq(payload, backlog.peek())) return this;
-
-			backlog.enqueue(payload ?? null);
-			console.log(`WARNING: ${
-				this._backlog[channel].size
-			} messages in backlog for ${channel}`);
+		if (this._pending[channel] || this._allPending > 0) {
+			log.debug(`Backlogging ${channel} request:`, payload ?? null);
+			this._backlog[channel].enqueue(payload ?? null);
 
 			return this;
 		}
 
 		++this._pending[channel];
+		log.request(channel, payload);
 
 		let msg = JSON.stringify({
 			channel,
@@ -101,14 +103,13 @@ export class IpcPipe {
 	}
 
 	private _processBacklog = () => {
-		Object.entries(this._pending)
-			.forEach(([chan, count]: [Channel, number]) => {
-				if (count) return;
-
-				let backlog = this._backlog[chan];
+		Object.entries(this._backlog)
+			.forEach(([chan, backlog]) => {
+				if (this._allPending) return;
 				if (!backlog.size) return;
 
-				this.send(chan, backlog.dequeue());
+				log.debug(`Sending ${chan} request:`, backlog.peek() ?? null);
+				this.send(chan as Channel, backlog.dequeue());
 			});
 
 		setTimeout(this._processBacklog);
@@ -128,6 +129,8 @@ export class IpcPipe {
 
 		if (msg) {
 			--this._pending[msg.channel];
+			log.response(msg.channel, msg.payload as Response);
+
 			this._input$.next(msg);
 		}
 	}
@@ -142,7 +145,9 @@ export class IpcPipe {
 					color: this._fmtColor(payload[chan].color),
 				};
 			case Channel.SetColor:
-				return null;
+				return {
+					id: payload[chan].id,
+				};
 			default: {
 				console.log(chalk.bold.redBright(`Unrecognized channel: ${chan}`));
 			}

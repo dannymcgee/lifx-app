@@ -1,0 +1,25 @@
+<section *ngIf="value?.brightness != null" class="control">
+	<label for="{{ bulbId }}_brightness">
+		Brightness
+	</label>
+	<input id="{{ bulbId }}_brightness"
+		type="range"
+		min="0" [max]="U16_MAX" step="1"
+		[ngModel]="value.brightness"
+		(ngModelChange)="updateBrightness($event)"
+	/>
+	<span>{{ value.brightness | u16toFloat | percent }}</span>
+</section>
+
+<section *ngIf="$any(value)?.kelvin" class="control">
+	<label for="{{ bulbId }}_kelvin">
+		Kelvin
+	</label>
+	<input id="{{ bulbId }}_kelvin"
+		type="range"
+		min="1500" max="9000" step="50"
+		[ngModel]="$any(value).kelvin"
+		(ngModelChange)="updateKelvin($event)"
+	/>
+	<span>{{ $any(value).kelvin }}</span>
+</section>
