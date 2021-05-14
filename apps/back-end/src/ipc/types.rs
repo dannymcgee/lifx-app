@@ -28,7 +28,10 @@ pub enum Channel {
 #[derive(Debug, Serialize, Deserialize)]
 pub enum RequestPayload {
 	GetColor { id: u64 },
-	SetColor(HashMap<u64, HSBK>),
+	SetColor {
+		values: HashMap<u64, HSBK>,
+		duration: Duration,
+	},
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, TrackByFunction } from "@angular/core";
+import {
+	ChangeDetectorRef,
+	Component,
+	OnDestroy,
+	OnInit,
+	TrackByFunction,
+} from "@angular/core";
 
 import { combineLatest, interval, Observable, Subject } from "rxjs";
 import { first, scan, share, takeUntil } from "rxjs/operators";
@@ -104,6 +110,6 @@ export class AppComponent implements OnInit, OnDestroy {
 		}, {});
 
 		this.groupColors[group] = { ...color };
-		this._lifx.setColors(targets);
+		this._lifx.setColors(targets, 0.25);
 	}
 }

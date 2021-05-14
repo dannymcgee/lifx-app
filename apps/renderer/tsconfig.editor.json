@@ -2,6 +2,11 @@
 	"extends": "./tsconfig.json",
 	"include": ["**/*.ts"],
 	"compilerOptions": {
-		"types": ["jest", "node"]
+		"types": ["jest", "node"],
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+	},
+	"angularCompilerOptions": {
+		"strictTemplates": true
 	}
 }

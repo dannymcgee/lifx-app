@@ -24,7 +24,7 @@ export class IpcPipe {
 	private _output: Writable;
 	private _input$ = new Subject<Message>();
 
-	private _backlog: Record<Channel, Queue<Request>> = {
+	private _backlog: Record<Channel, Queue<Request[Channel]>> = {
 		[Channel.Discovery]: new Queue(1),
 		[Channel.GetColor]: new Queue(1),
 		[Channel.SetColor]: new Queue(1),
@@ -56,7 +56,7 @@ export class IpcPipe {
 		setTimeout(this._processBacklog);
 	}
 
-	send(channel: Channel, payload?: Request): this {
+	send(channel: Channel, payload?: Request[typeof channel]): this {
 		// Handle back-pressure
 		if (this._pending[channel] || this._allPending > 0) {
 			log.debug(`Backlogging ${channel} request:`, payload ?? null);

@@ -21,7 +21,7 @@ import { LifxService } from "../lifx.service";
 export class BulbComponent implements OnChanges, OnDestroy {
 	@HostBinding()
 	@Input() id: string;
-	@Input() locked: boolean;
+	@Input() readOnly: boolean;
 
 	_bulb?: Bulb;
 
@@ -66,7 +66,7 @@ export class BulbComponent implements OnChanges, OnDestroy {
 	}
 
 	private async _updateColor(value: HSBK) {
-		await this._lifx.setColor(this.id, value);
+		await this._lifx.setColor(this.id, value, 0.25);
 		// try {
 		// 	let updated = await this._lifx.getColor(this.id);
 		// 	this._color = { ...updated };

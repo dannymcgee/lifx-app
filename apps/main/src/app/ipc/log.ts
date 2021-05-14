@@ -5,7 +5,7 @@ const chalk = new Chalk({ level: 2 });
 
 namespace log {
 
-	export function request(chan: Channel, payload?: Request) {
+	export function request(chan: Channel, payload?: Request[typeof chan]) {
 		let msg = ch(chan) + " --> " + pretty(payload ?? null);
 		process.stdout.write(msg.trim() + "\r");
 	}

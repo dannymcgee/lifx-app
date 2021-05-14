@@ -3,7 +3,7 @@ import { ipcMain } from "electron";
 import { noop } from "rxjs";
 import { filter, first, map } from "rxjs/operators";
 
-import { Channel, HSBK } from "@lifx/api";
+import { Channel, Request } from "@lifx/api";
 import { IpcPipe } from "./pipe";
 
 const BACKEND_EXE_PATH = "apps/back-end/target/debug/back-end.exe";
@@ -30,8 +30,8 @@ namespace ipc {
 				).toPromise();
 		});
 
-		ipcMain.handle(Channel.SetColor, (_, payload: Record<string, HSBK>) => {
-			let keys = Object.keys(payload);
+		ipcMain.handle(Channel.SetColor, (_, payload: Request["SetColor"]) => {
+			let keys = Object.keys(payload.values);
 			return pipe
 				.send(Channel.SetColor, payload)
 				.recvAll(Channel.SetColor).pipe(

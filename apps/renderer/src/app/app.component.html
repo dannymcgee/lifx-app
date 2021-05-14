@@ -20,7 +20,7 @@
 		*ngFor="let bulb of bulbs[group]
 			trackBy: trackById"
 		[id]="bulb.id"
-		[locked]="groupLocks[group]"
+		[readOnly]="groupLocks[group]"
 	></lifx-bulb>
 </section>
 

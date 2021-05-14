@@ -11,8 +11,11 @@ const api: ElectronIPC = {
 	getColor(id) {
 		return ipcRenderer.invoke(Channel.GetColor, { id });
 	},
-	setColor(targets) {
-		return ipcRenderer.invoke(Channel.SetColor, targets);
+	setColor(targets, secs) {
+		return ipcRenderer.invoke(Channel.SetColor, {
+			values: targets,
+			duration: { secs },
+		});
 	},
 }
 

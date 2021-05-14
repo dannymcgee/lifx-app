@@ -1,6 +1,6 @@
 <ng-container *ngIf="_bulb">
 	<h4>{{ name }}</h4>
-	<lifx-color *ngIf="color && !locked"
+	<lifx-color *ngIf="color && !readOnly"
 		[id]="id"
 		[(ngModel)]="color"
 	></lifx-color>

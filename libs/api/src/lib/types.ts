@@ -18,14 +18,18 @@ export type u16 = number;
 /** Range: 1500-9000 */
 export type Kelvin = number;
 
-export type HSBK = {
-	hue: u16;
-	saturation: u16;
-	brightness: u16;
-} | {
+export interface White {
 	kelvin: Kelvin;
 	brightness: u16;
 }
+
+export interface FullColor {
+	hue: u16;
+	saturation: u16;
+	brightness: u16;
+}
+
+export type HSBK = White|FullColor;
 
 export interface Bulb {
 	id: string;
@@ -42,7 +46,12 @@ export interface Bulb {
 export interface Request {
 	[Channel.Discovery]?: null;
 	[Channel.GetColor]?: { id: string };
-	[Channel.SetColor]?: Record<string, HSBK>;
+	[Channel.SetColor]?: {
+		values: Record<string, HSBK>;
+		duration: {
+			secs: number;
+		};
+	};
 }
 
 export interface Response {
@@ -59,5 +68,5 @@ export interface ElectronIPC {
 	getAppVersion(): Promise<string>;
 	discovery(): Promise<Bulb[]>;
 	getColor(id: string): Promise<HSBK>;
-	setColor(targets: Record<string, HSBK>): Promise<void>;
+	setColor(targets: Record<string, HSBK>, seconds: number): Promise<void>;
 }
