@@ -1,25 +1,32 @@
-<section *ngIf="value?.brightness != null" class="control">
-	<label for="{{ id }}_brightness">
-		Brightness
-	</label>
-	<input id="{{ id }}_brightness"
-		type="range"
-		min="0" [max]="U16_MAX" step="1"
-		[ngModel]="value.brightness"
-		(ngModelChange)="updateBrightness($event)"
-	/>
-	<span>{{ value.brightness | u16toFloat | percent }}</span>
-</section>
+<lifx-light-viz class="lifx-color__viz"
+	[brightness]="value?.brightness | u16toFloat"
+	[kelvin]="$any(value)?.kelvin"
+></lifx-light-viz>
 
-<section *ngIf="$any(value)?.kelvin" class="control">
-	<label for="{{ id }}_kelvin">
-		Kelvin
-	</label>
-	<input id="{{ id }}_kelvin"
-		type="range"
-		min="1500" max="9000" step="50"
-		[ngModel]="$any(value).kelvin"
-		(ngModelChange)="updateKelvin($event)"
-	/>
-	<span>{{ $any(value).kelvin }}</span>
-</section>
+<lifx-knob id="{{ id }}_brightness"
+	*ngIf="value?.brightness != null && !readOnly"
+	min="0" max="65535"
+	kbStep="655" kbCoarse="6553" kbFine="1"
+	ptrStep="3" ptrCoarse="6" ptrFine="0.5"
+	[value]="value.brightness"
+	(valueChange)="updateBrightness($event)"
+>
+	<span class="cdk-visually-hidden">
+		Brightness:
+	</span>
+	{{ value.brightness | u16toFloat | percent }}
+</lifx-knob>
+
+<lifx-knob id="{{ id }}_kelvin"
+	*ngIf="$any(value)?.kelvin && !readOnly"
+	min="1500" max="9000"
+	kbStep="50" kbCoarse="500" kbFine="1"
+	ptrStep="2" ptrCoarse="10" ptrFine="0.1"
+	[value]="$any(value).kelvin"
+	(valueChange)="updateKelvin($event)"
+>
+	<span class="cdk-visually-hidden">
+		Temperature:
+	</span>
+	{{ $any(value).kelvin }}k
+</lifx-knob>

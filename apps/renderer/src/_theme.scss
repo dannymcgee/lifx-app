@@ -1,0 +1,33 @@
+@import "~@angular/material/theming";
+
+@import "./app/app.theme";
+@import "./app/color/color.theme";
+@import "./app/knob/knob.theme";
+@import "./app/icon-toggle/icon-toggle.theme";
+@import "./app/bulb/bulb.theme";
+
+@include mat-core();
+
+$primary: mat-palette($mat-blue-gray, 600, 400, 800);
+$accent: mat-palette($mat-teal, A400, A200, A700);
+$warn: mat-palette($mat-pink, 300, A100, 500);
+
+$lifx-theme: mat-dark-theme((
+	color: (
+		primary: $primary,
+		accent: $accent,
+		warn: $warn,
+	)
+));
+
+@include angular-material-theme($lifx-theme);
+@include mat-checkbox-color($lifx-theme);
+@include mat-expansion-panel-color($lifx-theme);
+@include mat-tabs-color($lifx-theme);
+@include mat-toolbar-color($lifx-theme);
+
+@include lifx-app-theme($lifx-theme);
+@include lifx-bulb-theme($lifx-theme);
+@include lifx-color-theme($lifx-theme);
+@include lifx-icon-toggle-theme($lifx-theme);
+@include lifx-knob-theme($lifx-theme);

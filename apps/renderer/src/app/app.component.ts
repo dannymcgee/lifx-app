@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	loading = true;
 
 	groupLocks: Record<string, boolean> = {};
+	groupScheduleEnabled: Record<string, boolean> = {};
 	groupColors: Record<string, HSBK> = {};
 
 	private _onDestroy$ = new Subject<void>();
@@ -46,7 +47,7 @@ export class AppComponent implements OnInit, OnDestroy {
 					if (!b.group) return;
 					if (!acc.includes(b.group)) {
 						acc.push(b.group);
-						this.groupLocks[b.group] = false;
+						this.groupLocks[b.group] = true;
 					}
 				});
 				return acc;
@@ -112,4 +113,6 @@ export class AppComponent implements OnInit, OnDestroy {
 		this.groupColors[group] = { ...color };
 		this._lifx.setColors(targets, 0.25);
 	}
+
+	schedule() {}
 }

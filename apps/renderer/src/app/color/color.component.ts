@@ -1,9 +1,7 @@
-import { ChangeDetectorRef, Component, HostBinding, Input } from "@angular/core";
+import { ChangeDetectorRef, Component, HostBinding, Input, ViewEncapsulation } from "@angular/core";
 import { NgControl } from "@angular/forms";
 
-import chroma, { Color } from "chroma-js";
-
-import { HSBK, isFullColor, Kelvin, u16, u16toFloat } from "@lifx/api";
+import { HSBK, Kelvin, u16 } from "@lifx/api";
 import { FormControl } from "../forms.interface";
 
 const U16_MAX = 65_535;
@@ -12,14 +10,13 @@ const U16_MAX = 65_535;
 	selector: "lifx-color",
 	templateUrl: "./color.component.html",
 	styleUrls: ["./color.component.scss"],
+	encapsulation: ViewEncapsulation.None,
 })
 export class ColorComponent implements FormControl<HSBK> {
+	@HostBinding("class") hostClass = "lifx-color";
+
 	@Input() id: string;
 	@Input() readOnly: boolean;
-
-	@HostBinding("style.background-color")
-	get bgColor(): string { return this._viz?.css() ?? null; }
-	_viz: Color;
 
 	get value(): HSBK|null { return this._value ?? null; }
 	private _value?: HSBK;
@@ -49,21 +46,6 @@ export class ColorComponent implements FormControl<HSBK> {
 		setTimeout(() => {
 			this._changeDetector.markForCheck();
 		});
-
-		if (!value) {
-			this._viz = chroma.hex("#0000");
-			return;
-		}
-
-		if (isFullColor(value)) {
-			this._viz = chroma.hsv(
-				u16toFloat(value.hue) * 360,
-				u16toFloat(value.saturation),
-				u16toFloat(value.brightness),
-			);
-		} else {
-			this._viz = chroma.temperature(value.kelvin);
-		}
 	}
 
 	onChange = (_?: HSBK) => {}

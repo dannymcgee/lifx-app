@@ -1,0 +1,25 @@
+@import "lib";
+
+:host {
+	@include flex(center, center);
+	width: 72px;
+	padding-bottom: 20px;
+}
+
+.light-stack {
+	@include circle(16px);
+	position: relative;
+
+	&__element {
+		@include circle(16px);
+		@include absolute-fill;
+	}
+
+	&__color {
+		mix-blend-mode: color-dodge;
+	}
+
+	&__sheen {
+		box-shadow: inset 0 0 4px #FFF4;
+	}
+}

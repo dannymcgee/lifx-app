@@ -1,0 +1,26 @@
+@import "lib";
+
+.lifx-icon-toggle {
+	@include flex(center, center);
+	position: relative;
+	overflow: visible;
+	transition: color 200ms linear;
+
+	&:focus {
+		outline: none !important;
+	}
+
+	&__tooltip-target {
+		@include absolute-fill;
+		pointer-events: none;
+	}
+
+	&__tooltip {
+		text-align: center;
+	}
+
+	&__ripple {
+		overflow: visible;
+		@include absolute-fill;
+	}
+}

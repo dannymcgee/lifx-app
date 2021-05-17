@@ -1,0 +1,31 @@
+<mat-icon>
+	{{ _activeIcon }}
+</mat-icon>
+
+<div class="lifx-icon-toggle__tooltip-target"
+	[matTooltip]="_tooltipMessage"
+	matTooltipPosition="above"
+	matTooltipClass="lifx-icon-toggle__tooltip"
+></div>
+
+<div id="{{ id }}_description"
+	class="cdk-visually-hidden"
+	*ngIf="!!description"
+>
+	{{ description }}
+</div>
+
+<div class="
+	lifx-icon-toggle__ripple
+	lifx-icon-toggle__focus-ripple"
+	#focusRipple
+	matRipple
+	[matRippleDisabled]="true"
+></div>
+<div class="
+	lifx-icon-toggle__ripple
+	lifx-icon-toggle__active-ripple"
+	#activeRipple
+	matRipple
+	[matRippleDisabled]="true"
+></div>

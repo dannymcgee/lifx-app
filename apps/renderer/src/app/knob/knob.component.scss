@@ -1,0 +1,49 @@
+@import "~@angular/material/theming";
+@import "lib";
+
+.lifx-knob {
+	@include flex(center);
+	flex-direction: column;
+	position: relative;
+
+	&:focus {
+		outline: none !important;
+	}
+
+	&__knob {
+		@include circle(32px);
+		position: relative;
+		z-index: 1;
+		transform: var(--rotation);
+	}
+
+	&__shadow,
+	&__focusring {
+		@include circle(32px);
+		position: absolute;
+		top: 0;
+	}
+
+	&__shadow {
+		@include mat-elevation(8, $opacity: 0.5);
+	}
+
+	&__focusring {
+		overflow: visible;
+	}
+
+	&__indicator {
+		display: block;
+		@include circle(8px);
+		position: relative;
+		top: 4px;
+		left: 50%;
+		transform: translateX(-50%) var(--inverse-rotation);
+	}
+
+	&__label {
+		font-size: 12px;
+		font-weight: 500;
+		transition: color 200ms linear;
+	}
+}

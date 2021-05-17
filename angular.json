@@ -40,7 +40,10 @@
 							"apps/renderer/src/assets"
 						],
 						"styles": ["apps/renderer/src/styles.scss"],
-						"scripts": []
+						"scripts": [],
+						"stylePreprocessorOptions": {
+							"includePaths": ["apps/renderer/src/assets"]
+						}
 					},
 					"configurations": {
 						"production": {

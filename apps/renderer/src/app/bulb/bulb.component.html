@@ -1,12 +1,15 @@
 <ng-container *ngIf="_bulb">
-	<h4>{{ name }}</h4>
-	<lifx-color *ngIf="color && !readOnly"
+	<div class="lifx-bulb__header">
+		<h4 class="lifx-bulb__title">
+			{{ name }}
+		</h4>
+		<span class="lifx-bulb__last-seen">
+			Last seen {{ lastSeen | relative }}
+		</span>
+	</div>
+	<lifx-color class="lifx-bulb__color"
+		*ngIf="color && !readOnly"
 		[id]="id"
 		[(ngModel)]="color"
 	></lifx-color>
-	<em>Last seen {{
-		lastSeen | date : 'HH:mm'
-	}} ({{
-		lastSeen | relative
-	}})</em>
 </ng-container>

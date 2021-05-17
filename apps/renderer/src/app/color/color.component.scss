@@ -1,3 +1,18 @@
-:host {
-	display: block;
+@import "lib";
+
+.lifx-color {
+	@include flex(center);
+	height: 96px;
+	gap: 16px;
+	position: relative;
+
+	&__viz {
+		margin-right: 32px;
+	}
+
+	&__shadow-inlay {
+		@include absolute-fill;
+		z-index: 10;
+		pointer-events: none;
+	}
 }

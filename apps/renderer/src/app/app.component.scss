@@ -1,5 +1,65 @@
-* {
-	font-family: sans-serif;
+@import "lib";
+
+:host {
+	display: block;
+}
+
+.main-content {
+	padding: px(36) px(24);
+}
+
+.lifx-group {
+	margin-bottom: px(16);
+	transition: margin-bottom 100ms ease-in-out;
+
+	&.mat-expanded {
+		margin-bottom: px(24);
+	}
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	&__header {
+		::ng-deep .mat-content {
+			overflow: visible;
+		}
+	}
+		&__title {
+			flex: 0 0 auto;
+			align-items: center;
+		}
+		&__icon {
+			margin-right: 12px;
+		}
+
+	&__body {
+		padding: 16px 0;
+	}
+		&__bulb-names {
+			padding: 12px 16px;
+			margin-bottom: -32px;
+			font-weight: 500;
+		}
+		&__color {
+			margin: 32px 0 16px;
+		}
+		&__bulb {
+			margin-bottom: 16px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+	::ng-deep {
+		.mat-tab-body,
+		.mat-tab-body.mat-tab-body-active,
+		.mat-tab-body-wrapper,
+		.mat-tab-body-content {
+			overflow: visible;
+		}
+	}
 }
 
 pre {

@@ -5,6 +5,7 @@ import {
 	OnChanges,
 	OnDestroy,
 	SimpleChanges,
+	ViewEncapsulation,
 } from "@angular/core";
 
 import { merge, Subject } from "rxjs";
@@ -17,8 +18,11 @@ import { LifxService } from "../lifx.service";
 	selector: "lifx-bulb",
 	templateUrl: "./bulb.component.html",
 	styleUrls: ["./bulb.component.scss"],
+	encapsulation: ViewEncapsulation.None,
 })
 export class BulbComponent implements OnChanges, OnDestroy {
+	@HostBinding("class") hostClass = "lifx-bulb";
+
 	@HostBinding()
 	@Input() id: string;
 	@Input() readOnly: boolean;

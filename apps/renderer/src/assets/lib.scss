@@ -1,0 +1,23 @@
+@function px($px) {
+	@return $px / 16 * 1rem;
+}
+
+@mixin circle($size) {
+	width: $size;
+	height: $size;
+	border-radius: $size / 2;
+}
+
+@mixin flex($alignment, $justification: flex-start) {
+	display: flex;
+	align-items: $alignment;
+	justify-content: $justification;
+}
+
+@mixin absolute-fill {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}

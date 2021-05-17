@@ -4,9 +4,8 @@ import { noop } from "rxjs";
 import { filter, first, map } from "rxjs/operators";
 
 import { Channel, Request } from "@lifx/api";
+import { BACKEND_EXE_PATH } from "../constants";
 import { IpcPipe } from "./pipe";
-
-const BACKEND_EXE_PATH = "apps/back-end/target/debug/back-end.exe";
 
 namespace ipc {
 

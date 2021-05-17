@@ -6,7 +6,4 @@
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
 	},
-	"angularCompilerOptions": {
-		"strictTemplates": true
-	}
 }

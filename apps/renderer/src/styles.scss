@@ -1,3 +1,13 @@
+@import "./theme";
+@import "./typography";
+
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+html, body {
+	height: 100%;
+}
 body {
-	background: #fff;
+	margin: 0;
+	font-family: Roboto, "Helvetica Neue", sans-serif;
 }

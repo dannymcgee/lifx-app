@@ -1,0 +1,19 @@
+@import "~@angular/material/theming";
+
+@mixin lifx-bulb-theme($config-or-theme) {
+	$config: mat-get-color-config($config-or-theme);
+	$background: map-get($config, background);
+	$foreground: map-get($config, foreground);
+
+	.lifx-bulb {
+		&__header {
+			background: mat-color($background, tooltip, 0.5);
+		}
+			&__title {
+				color: mat-color($foreground, secondary-text);
+			}
+			&__last-seen {
+				color: mat-color($foreground, disabled);
+			}
+	}
+}

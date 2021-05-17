@@ -1,0 +1,23 @@
+@import "~@angular/material/theming";
+
+@mixin lifx-icon-toggle-theme($config-or-theme) {
+	$config: mat-get-color-config($config-or-theme);
+	$primary: map-get($config, primary);
+	$accent: map-get($config, accent);
+	$foreground: map-get($config, foreground);
+
+	.lifx-icon-toggle {
+		color: mat-color($foreground, disabled, $opacity: 0.25);
+
+		&.primary { --active-color: #{mat-color($primary, 300)} }
+		&.accent  { --active-color: #{mat-color($accent)} }
+
+		&.checked {
+			color: var(--active-color);
+		}
+
+		&__active-ripple .mat-ripple-element {
+			background-color: mat-color($accent, lighter, 0.1);
+		}
+	}
+}
