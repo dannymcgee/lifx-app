@@ -127,6 +127,7 @@ export class IconToggleComponent implements OnInit, OnDestroy {
 	@HostListener("keydown.space", ["$event"])
 	@HostListener("pointerdown", ["$event"])
 	_launchRipple(event: Event) {
+		event.preventDefault();
 		event.stopPropagation();
 
 		if (this._isPressed) return;
