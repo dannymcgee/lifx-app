@@ -1,7 +1,23 @@
-<div class="lifx-knob__focusring" matRipple></div>
-<div class="lifx-knob__shadow"></div>
+<div class="lifx-knob__focus-ripple"
+	#focusRipple
+	matRipple
+></div>
+
 <div class="lifx-knob__knob">
-	<b class="lifx-knob__indicator"></b>
+	<svg class="lifx-knob__meter"
+		viewBox="0 0 48 48"
+	>
+		<circle class="empty"
+			cx="24"
+			cy="24"
+			r="18"
+		/>
+		<circle class="filled"
+			cx="24"
+			cy="24"
+			r="18"
+		/>
+	</svg>
 </div>
 
 <label class="lifx-knob__label"

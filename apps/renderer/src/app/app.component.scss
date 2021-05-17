@@ -28,6 +28,13 @@
 		&__title {
 			flex: 0 0 auto;
 			align-items: center;
+
+			span {
+				position: relative;
+				top: -0.1em;
+				line-height: 1;
+				font-weight: 700;
+			}
 		}
 		&__icon {
 			margin-right: 12px;

@@ -1,10 +1,6 @@
 <ng-container *ngIf="(groups$ | async) as groups">
 <ng-container *ngIf="(bulbs$ | async) as bulbs">
 
-<mat-toolbar class="mat-elevation-z6" color="primary">
-	<span>LIFX App</span>
-</mat-toolbar>
-
 <main class="main-content">
 
 	<mat-expansion-panel class="lifx-group"
@@ -12,15 +8,18 @@
 		#panel="matExpansionPanel"
 	>
 		<mat-expansion-panel-header class="lifx-group__header">
+
 			<mat-panel-title class="lifx-group__title">
 				<mat-icon class="lifx-group__icon">
 					{{ group | groupIcon }}
 				</mat-icon>
-				{{ group }}
+				<span>{{ group }}</span>
 			</mat-panel-title>
+
 			<mat-panel-description>
 				<lifx-icon-toggle
 					id="{{ group }}_sync-toggle"
+					color="accent"
 					icon="link"
 					uncheckedIcon="link_off"
 					label="Synchronize these lights"
@@ -30,57 +29,31 @@
 					[(value)]="groupLocks[group]"
 				></lifx-icon-toggle>
 			</mat-panel-description>
+
 		</mat-expansion-panel-header>
+		<section class="lifx-group__body" *matExpansionPanelContent>
 
-		<mat-tab-group
-			*matExpansionPanelContent
-			color="accent"
-			animationDuration="200ms"
-		>
-			<mat-tab label="Adjust">
-				<section class="lifx-group__body">
+			<ng-container *ngIf="groupLocks[group]">
+				<div class="lifx-group__bulb-names">
+					{{ bulbs[group] | commaSep : 'name' }}
+				</div>
+				<lifx-color class="lifx-group__color"
+					[id]="group"
+					[(ngModel)]="groupColors[group]"
+					(ngModelChange)="setGroupColor(group, $event)"
+				></lifx-color>
+			</ng-container>
 
-					<ng-container
-						*ngIf="groupLocks[group] || groupScheduleEnabled[group]"
-					>
-						<div class="lifx-group__bulb-names">
-							{{ bulbs[group] | commaSep : 'name' }}
-						</div>
-						<lifx-color class="lifx-group__color"
-							[id]="group"
-							[readOnly]="groupScheduleEnabled[group]"
-							[(ngModel)]="groupColors[group]"
-							(ngModelChange)="setGroupColor(group, $event)"
-						></lifx-color>
-					</ng-container>
+			<ng-container *ngIf="!groupLocks[group]">
+				<lifx-bulb class="lifx-group__bulb"
+					*ngFor="let bulb of bulbs[group]
+						trackBy: trackById"
+					[id]="bulb.id"
+					[readOnly]="groupLocks[group]"
+				></lifx-bulb>
+			</ng-container>
 
-					<ng-container *ngIf="!groupLocks[group]">
-						<lifx-bulb class="lifx-group__bulb"
-							*ngFor="let bulb of bulbs[group]
-								trackBy: trackById"
-							[id]="bulb.id"
-							[readOnly]="groupLocks[group]"
-						></lifx-bulb>
-					</ng-container>
-
-				</section>
-			</mat-tab>
-
-			<mat-tab label="Schedule">
-				<section class="lifx-group__body">
-					<mat-checkbox
-						[(ngModel)]="groupScheduleEnabled[group]"
-					>
-						Enable Schedule
-					</mat-checkbox>
-
-					<lifx-schedule *ngIf="groupScheduleEnabled[group]"
-						[group]="group"
-					></lifx-schedule>
-				</section>
-			</mat-tab>
-
-		</mat-tab-group>
+		</section>
 	</mat-expansion-panel>
 
 </main>

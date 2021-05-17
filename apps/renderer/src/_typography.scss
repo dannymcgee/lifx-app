@@ -2,20 +2,20 @@
 @import "lib";
 
 $lifx-typography: mat-typography-config(
-	$font-family:   'Roboto, "Helvetica Neue", sans-serif',
-	$display-4:     mat-typography-level(px(112), px(112), 300, $letter-spacing: -0.05em),
-	$display-3:     mat-typography-level( px(56),  px(56), 400, $letter-spacing: -0.02em),
-	$display-2:     mat-typography-level( px(45),  px(48), 400, $letter-spacing: -0.005em),
-	$display-1:     mat-typography-level( px(34),  px(40), 400),
-	$headline:      mat-typography-level( px(24),  px(32), 400),
-	$title:         mat-typography-level( px(20),  px(32), 500),
-	$subheading-2:  mat-typography-level( px(16),  px(28), 400),
-	$subheading-1:  mat-typography-level( px(15),  px(24), 400),
+	$font-family:   'sofia-pro, sans-serif',
+	$display-4:     mat-typography-level(px(112), px(112), 900, $letter-spacing: -0.05em),
+	$display-3:     mat-typography-level( px(56),  px(56), 500, $letter-spacing: -0.02em),
+	$display-2:     mat-typography-level( px(45),  px(48), 500, $letter-spacing: -0.005em),
+	$display-1:     mat-typography-level( px(34),  px(40), 500),
+	$headline:      mat-typography-level( px(24),  px(32), 500),
+	$title:         mat-typography-level( px(20),  px(32), 900),
+	$subheading-2:  mat-typography-level( px(16),  px(28), 500),
+	$subheading-1:  mat-typography-level( px(15),  px(24), 500),
 	$body-2:        mat-typography-level( px(14),  px(24), 500),
-	$body-1:        mat-typography-level( px(14),  px(20), 400),
-	$caption:       mat-typography-level( px(12),  px(20), 400),
+	$body-1:        mat-typography-level( px(14),  px(20), 500),
+	$caption:       mat-typography-level( px(12),  px(20), 500),
 	$button:        mat-typography-level( px(14),  px(14), 500),
-	$input:         mat-typography-level(inherit, 1.125, 400)
+	$input:         mat-typography-level(inherit, 1.125, 500)
 );
 
 @include angular-material-typography($lifx-typography);

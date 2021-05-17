@@ -86,14 +86,19 @@ export class KnobComponent implements OnInit, OnDestroy {
 		return `rotate(${this._rotation}deg)`;
 	}
 
-	@HostBinding("style.--inverse-rotation")
-	get inverseRotation(): string {
-		return `rotate(${-this._rotation}deg)`;
+	@HostBinding("style.--filled-dasharray")
+	get filledDasharray(): string {
+		let filled = remap(
+			this.value,
+			[this.min, this.max],
+			[0, 90]
+		);
+		return `${filled} 200`;
 	}
 
-	@ViewChild(MatRipple)
-	ripple: MatRipple;
-	private _rippleRef?: RippleRef;
+	@ViewChild("focusRipple", { read: MatRipple })
+	focusRipple: MatRipple;
+	private _focusRippleRef?: RippleRef;
 
 	private _onDestroy$ = new Subject<void>();
 
@@ -107,7 +112,7 @@ export class KnobComponent implements OnInit, OnDestroy {
 			.monitor(this._elementRef)
 			.subscribe(origin => {
 				if (origin === "keyboard") {
-					this._rippleRef = this.ripple.launch({
+					this._focusRippleRef = this.focusRipple.launch({
 						animation: {
 							enterDuration: 200,
 							exitDuration: 400,
@@ -115,11 +120,11 @@ export class KnobComponent implements OnInit, OnDestroy {
 						persistent: true,
 						terminateOnPointerUp: false,
 						centered: true,
-						radius: 28,
+						radius: 32,
 					});
 				}
 				if (origin === null) {
-					this._rippleRef?.fadeOut();
+					this._focusRippleRef?.fadeOut();
 				}
 			});
 

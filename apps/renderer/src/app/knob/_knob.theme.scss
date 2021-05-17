@@ -2,19 +2,25 @@
 
 @mixin lifx-knob-theme($config-or-theme) {
 	$config: mat-get-color-config($config-or-theme);
-	$primary: map-get($config, primary);
 	$accent: map-get($config, accent);
 	$foreground: map-get($config, foreground);
+	$background: map-get($config, background);
 
 	.lifx-knob {
 		$host: &;
 
-		&__knob {
-			background: mat-color($primary);
+		&__focus-ripple .mat-ripple-element {
+			background: mat-color($accent, $opacity: 0.1);
 		}
-			&__indicator {
-				background: mat-color($primary, lighter);
+
+		&__meter circle {
+			&.empty {
+				stroke: mat-color($background, 500);
 			}
+			&.filled {
+				stroke: mat-color($accent);
+			}
+		}
 
 		&__label {
 			color: mat-color($foreground, secondary-text);

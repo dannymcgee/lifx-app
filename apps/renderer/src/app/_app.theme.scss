@@ -7,7 +7,7 @@
 
 	.lifx-group {
 		&__icon {
-			color: mat-color($primary, lighter);
+			color: mat-color($foreground, icon);
 		}
 
 		&__bulb-names {

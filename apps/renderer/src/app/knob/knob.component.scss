@@ -4,44 +4,51 @@
 .lifx-knob {
 	@include flex(center);
 	flex-direction: column;
+	width: 32px;
 	position: relative;
+	cursor: grab;
 
 	&:focus {
 		outline: none !important;
 	}
 
-	&__knob {
-		@include circle(32px);
-		position: relative;
-		z-index: 1;
-		transform: var(--rotation);
-	}
-
-	&__shadow,
-	&__focusring {
+	&__focus-ripple {
 		@include circle(32px);
 		position: absolute;
 		top: 0;
-	}
-
-	&__shadow {
-		@include mat-elevation(8, $opacity: 0.5);
-	}
-
-	&__focusring {
 		overflow: visible;
 	}
 
-	&__indicator {
-		display: block;
-		@include circle(8px);
+	&__knob {
+		@include circle(32px);
 		position: relative;
-		top: 4px;
-		left: 50%;
-		transform: translateX(-50%) var(--inverse-rotation);
+		overflow: visible;
 	}
+		&__meter {
+			position: absolute;
+			top: -8px;
+			right: -8px;
+			bottom: -8px;
+			left: -8px;
+			fill: transparent;
+
+			circle {
+				stroke-width: 4px;
+				transform: rotate(128deg);
+				transform-origin: center;
+
+				&.empty {
+					stroke-dasharray: 90 200;
+				}
+				&.filled {
+					stroke-dasharray: var(--filled-dasharray);
+				}
+			}
+		}
 
 	&__label {
+		max-width: 100%;
+		overflow: visible;
 		font-size: 12px;
 		font-weight: 500;
 		transition: color 200ms linear;

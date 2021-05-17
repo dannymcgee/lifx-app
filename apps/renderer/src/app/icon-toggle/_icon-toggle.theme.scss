@@ -7,17 +7,26 @@
 	$foreground: map-get($config, foreground);
 
 	.lifx-icon-toggle {
-		color: mat-color($foreground, disabled, $opacity: 0.25);
+		color: mat-color($foreground, disabled);
 
-		&.primary { --active-color: #{mat-color($primary, 300)} }
-		&.accent  { --active-color: #{mat-color($accent)} }
+		&.primary {
+			--active-color: #{mat-color($primary)};
+			--active-ripple: #{mat-color($primary, $opacity: 0.1)};
+		}
+		&.accent {
+			--active-color: #{mat-color($accent)};
+			--active-ripple: #{mat-color($accent, $opacity: 0.1)};
+		}
 
 		&.checked {
 			color: var(--active-color);
 		}
 
+		&.checked &__focus-ripple .mat-ripple-element {
+			background-color: var(--active-ripple);
+		}
 		&__active-ripple .mat-ripple-element {
-			background-color: mat-color($accent, lighter, 0.1);
+			background-color: var(--active-ripple);
 		}
 	}
 }

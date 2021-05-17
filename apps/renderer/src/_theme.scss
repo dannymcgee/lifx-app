@@ -8,8 +8,145 @@
 
 @include mat-core();
 
-$primary: mat-palette($mat-blue-gray, 600, 400, 800);
-$accent: mat-palette($mat-teal, A400, A200, A700);
+$lifx-primary: (
+	50:  #F2E7FE,
+	100: #DBB2FF,
+	200: #BB86FC,
+	300: #985EFF,
+	400: #7F39FB,
+	500: #6200EE,
+	600: #5600E8,
+	700: #3700B3,
+	800: #30009C,
+	900: #23036A,
+	A100: #BB86FC,
+	A200: #7F39FB,
+	A400: #6200EE,
+	A700: #3700B3,
+	contrast: (
+		50:  $dark-primary-text,
+		100: $dark-primary-text,
+		200: $dark-primary-text,
+		300: $dark-primary-text,
+		400: $dark-primary-text,
+		500: $light-primary-text,
+		600: $light-primary-text,
+		700: $light-primary-text,
+		800: $light-primary-text,
+		900: $light-primary-text,
+		A100: $dark-primary-text,
+		A200: $light-primary-text,
+		A400: $light-primary-text,
+		A700: $light-primary-text,
+	)
+);
+
+$lifx-accent: (
+	50:  #C8FFF4,
+	100: #70EFDE,
+	200: #03DAC5,
+	300: #00C4B4,
+	400: #00B3A6,
+	500: #01A299,
+	600: #019592,
+	700: #018786,
+	800: #017374,
+	900: #005457,
+	A100: #C8FFF4,
+	A200: #03DAC5,
+	A400: #00B3A6,
+	A700: #018786,
+	contrast: (
+		50:  $dark-primary-text,
+		100: $dark-primary-text,
+		200: $dark-primary-text,
+		300: $dark-primary-text,
+		400: $dark-primary-text,
+		500: $light-primary-text,
+		600: $light-primary-text,
+		700: $light-primary-text,
+		800: $light-primary-text,
+		900: $light-primary-text,
+		A100: $dark-primary-text,
+		A200: $light-primary-text,
+		A400: $light-primary-text,
+		A700: $light-primary-text,
+	)
+);
+
+$lifx-neutral: (
+	50:  #FFFFFF,
+	100: #CAC7CF,
+	200: #8888A2,
+	300: #6B6B77,
+	400: #444451,
+	500: #1C1C20,
+	600: #121216,
+	700: #191919,
+	800: #05050A,
+	900: #000000,
+	contrast: (
+		50:  $dark-primary-text,
+		100: $dark-primary-text,
+		200: $dark-primary-text,
+		300: $light-primary-text,
+		400: $light-primary-text,
+		500: $light-primary-text,
+		600: $light-primary-text,
+		700: $light-primary-text,
+		800: $light-primary-text,
+		900: $light-primary-text,
+	)
+);
+
+$mat-dark-theme-background: (
+	50:  map-get($lifx-neutral, 900),
+	100: map-get($lifx-neutral, 800),
+	200: map-get($lifx-neutral, 700),
+	300: map-get($lifx-neutral, 600),
+	400: map-get($lifx-neutral, 500),
+	500: map-get($lifx-neutral, 400),
+	600: map-get($lifx-neutral, 300),
+	700: map-get($lifx-neutral, 200),
+	800: map-get($lifx-neutral, 100),
+	900: map-get($lifx-neutral, 50),
+	status-bar:               map-get($lifx-neutral, 900),
+	app-bar:                  map-get($lifx-neutral, 800),
+	background:               map-get($lifx-neutral, 600),
+	hover:                    mat-color($lifx-primary, 200, 0.04),
+	card:                     map-get($lifx-neutral, 500),
+	dialog:                   map-get($lifx-neutral, 500),
+	disabled-button:          map-get($lifx-neutral, 400),
+	raised-button:            map-get($lifx-neutral, 400),
+	focused-button:           mat-color($lifx-primary, 200, 0.12),
+	selected-button:          mat-color($lifx-primary, 200, 0.08),
+	selected-disabled-button: map-get($lifx-neutral, 800),
+	disabled-button-toggle:   map-get($lifx-neutral, 900),
+	unselected-chip:          map-get($lifx-neutral, 400),
+	disabled-list-option:     map-get($lifx-neutral, 700),
+	tooltip:                  map-get($lifx-neutral, 400),
+);
+
+$mat-dark-theme-foreground: (
+	base:              map-get($lifx-neutral, 50),
+	divider:           map-get($lifx-neutral, 500),
+	dividers:          map-get($lifx-neutral, 500),
+	disabled:          map-get($lifx-neutral, 300),
+	disabled-button:   rgba(white, 0.3),
+	disabled-text:     map-get($lifx-neutral, 300),
+	elevation:         map-get($lifx-neutral, 900),
+	hint-text:         map-get($lifx-neutral, 300),
+	secondary-text:    map-get($lifx-neutral, 100),
+	icon:              map-get($lifx-neutral, 200),
+	icons:             map-get($lifx-neutral, 200),
+	text:              map-get($lifx-neutral, 50),
+	slider-min:        map-get($lifx-neutral, 50),
+	slider-off:        rgba(white, 0.3),
+	slider-off-active: rgba(white, 0.3),
+);
+
+$primary: mat-palette($lifx-primary, 200, 50, 400);
+$accent: mat-palette($lifx-accent, 200, 50, 500);
 $warn: mat-palette($mat-pink, 300, A100, 500);
 
 $lifx-theme: mat-dark-theme((
