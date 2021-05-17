@@ -18,8 +18,6 @@ import { animationFrameScheduler, fromEvent, merge, Subject } from "rxjs";
 import {
 	filter,
 	map,
-	pairwise,
-	startWith,
 	takeUntil,
 	throttleTime,
 } from "rxjs/operators";
@@ -100,7 +98,7 @@ export class KnobComponent implements OnInit, OnDestroy {
 	private _onDestroy$ = new Subject<void>();
 
 	constructor(
-		private _elementRef: ElementRef,
+		private _elementRef: ElementRef<HTMLElement>,
 		private _focusMonitor: FocusMonitor,
 	) {}
 
@@ -159,34 +157,39 @@ export class KnobComponent implements OnInit, OnDestroy {
 		this._onDestroy$.complete();
 	}
 
-	@HostListener("mousedown", ["$event"])
-	_startMouseAdjustment(event: MouseEvent) {
+	@HostListener("pointerdown", ["$event"])
+	_startMouseAdjustment(event: PointerEvent) {
 		event.preventDefault();
 
-		fromEvent<MouseEvent>(document.body, "mousemove").pipe(
-			startWith(event),
-			throttleTime(0, animationFrameScheduler),
-			map(Vec2.fromMouseEvent),
-			pairwise(),
-			takeUntil(merge(
-				fromEvent(document.body, "mouseup"),
-				fromEvent(document.body, "mouseleave"),
-				this._onDestroy$
-			))
-		).subscribe(([prev, curr]) => {
-			let delta = curr.minus(prev).asScreenPct();
-			let change = Math.round(
-				delta.y
-				* -1
-				* (this.max - this.min)
-				* this._ptrMagnitude.get()
-			);
-			let value = this.value + change;
-			value = clamp(value, [this.min, this.max]);
+		let { nativeElement: element } = this._elementRef;
+		element.requestPointerLock();
 
-			if (value !== this.value) {
-				this.valueChange.emit(value);
-			}
+		fromEvent<PointerEvent>(element, "pointermove").pipe(
+			throttleTime(0, animationFrameScheduler),
+			map(Vec2.fromPointerEvent),
+			takeUntil(merge(
+				fromEvent(element, "pointerup"),
+				this._onDestroy$,
+			)),
+		).subscribe({
+			next: (vec2) => {
+				let delta = vec2.asScreenPct();
+				let change = Math.round(
+					delta.y
+					* -1
+					* (this.max - this.min)
+					* this._ptrMagnitude.get()
+				);
+				let value = this.value + change;
+				value = clamp(value, [this.min, this.max]);
+
+				if (value !== this.value) {
+					this.valueChange.emit(value);
+				}
+			},
+			complete: () => {
+				document.exitPointerLock();
+			},
 		});
 	}
 

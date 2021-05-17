@@ -8,6 +8,10 @@ export class Vec2 {
 		return new Vec2(event.screenX, event.screenY);
 	}
 
+	static fromPointerEvent(event: PointerEvent): Vec2 {
+		return new Vec2(event.movementX, event.movementY);
+	}
+
 	plus(other: Vec2): Vec2 {
 		return new Vec2(this.x + other.x, this.y + other.y);
 	}
