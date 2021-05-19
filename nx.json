@@ -22,6 +22,7 @@
 		"main": { "tags": [], "implicitDependencies": ["renderer"] },
 		"back-end": { "tags": [] },
 		"api": { "tags": [] },
-		"std": { "tags": [] }
+		"std": { "tags": [] },
+		"math": { "tags": [] }
 	}
 }

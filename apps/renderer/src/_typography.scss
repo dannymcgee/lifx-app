@@ -20,7 +20,4 @@ $lifx-typography: mat-typography-config(
 
 @include angular-material-typography($lifx-typography);
 @include mat-button-typography($lifx-typography);
-@include mat-checkbox-typography($lifx-typography);
-@include mat-expansion-panel-typography($lifx-typography);
-@include mat-tabs-typography($lifx-typography);
-@include mat-toolbar-typography($lifx-typography);
+@include mat-tooltip-typography($lifx-typography);

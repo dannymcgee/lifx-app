@@ -1,11 +1,9 @@
 import { ChangeDetectorRef, Component, HostBinding, Input, ViewEncapsulation } from "@angular/core";
 import { NgControl } from "@angular/forms";
 
-import { HSBK, Kelvin, u16 } from "@lifx/api";
-import { Coerce } from "../coerce.decorator";
-import { FormControl } from "../forms.interface";
-
-const U16_MAX = 65_535;
+import { HSBK, Kelvin, u16, U16_MAX } from "@lifx/api";
+import { Coerce } from "../utility/coerce.decorator";
+import { FormControl } from "../types";
 
 @Component({
 	selector: "lifx-color",

@@ -195,10 +195,7 @@ $lifx-theme: mat-dark-theme((
 
 @include angular-material-theme($lifx-theme);
 @include mat-button-color($lifx-theme);
-@include mat-checkbox-color($lifx-theme);
-@include mat-expansion-panel-color($lifx-theme);
-@include mat-tabs-color($lifx-theme);
-@include mat-toolbar-color($lifx-theme);
+@include mat-tooltip-color($lifx-theme);
 
 @include lifx-app-theme($lifx-theme);
 @include lifx-bulb-theme($lifx-theme);

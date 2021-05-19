@@ -22,11 +22,8 @@ import {
 	throttleTime,
 } from "rxjs/operators";
 
-import { clamp } from "../clamp";
-import { Coerce } from "../coerce.decorator";
-import { remap } from "../lerp";
-import { Stepper } from "../stepper";
-import { Vec2 } from "../vector";
+import { clamp, remap, Stepper, Vec2 } from "@lifx/math";
+import { Coerce } from "../utility/coerce.decorator";
 
 enum Delta {
 	Inc = 1,

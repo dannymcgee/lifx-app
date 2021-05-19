@@ -3,27 +3,32 @@
 		"name": "Workspace Root",
 		"path": "."
 	}, {
-		"name": "main",
-		"path": "apps/main"
-	}, {
-		"name": "renderer",
-		"path": "apps/renderer"
+		"name": "api",
+		"path": "libs/api"
 	}, {
 		"name": "back-end",
 		"path": "apps/back-end"
 	}, {
-		"name": "api",
-		"path": "libs/api"
+		"name": "main",
+		"path": "apps/main"
+	}, {
+		"name": "math",
+		"path": "libs/math"
+	}, {
+		"name": "renderer",
+		"path": "apps/renderer"
 	}, {
 		"name": "std",
 		"path": "libs/std"
 	}],
 	"settings": {
 		"jest.disabledWorkspaceFolders": [
-			"main",
-			"renderer",
-			"back-end",
 			"api",
+			"back-end",
+			"main",
+			"math",
+			"renderer",
+			"std",
 		],
 		"typescript.tsdk": "Workspace Root/node_modules/typescript/lib",
 		"angular.enable-strict-mode-prompt": false

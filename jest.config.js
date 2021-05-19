@@ -4,5 +4,6 @@ module.exports = {
 		"<rootDir>/apps/main",
 		"<rootDir>/libs/api",
 		"<rootDir>/libs/std",
+		"<rootDir>/libs/math",
 	],
 };

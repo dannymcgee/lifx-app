@@ -1,5 +1,5 @@
 import { coerceBooleanProperty, coerceNumberProperty } from "@angular/cdk/coercion";
-import { Func } from "./types";
+import { Func } from "../types";
 
 type Coerced<Ctor> = Ctor extends new (args?: any) => infer R ? R : never;
 

@@ -8,27 +8,22 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // 3rd-Party UI Imports
 import { MatRippleModule } from "@angular/material/core";
 import { MatButtonModule } from "@angular/material/button";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatExpansionModule } from "@angular/material/expansion";
 import { MatIconModule } from "@angular/material/icon";
-import { MatTabsModule } from "@angular/material/tabs";
-import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
+
+// Child Modules
+import { UtilityModule } from "./utility/utility.module";
 
 // Module Declarations
 import { AppComponent } from "./app.component";
 import { BulbComponent } from "./bulb/bulb.component";
 import { ColorComponent } from "./color/color.component";
-import { CommaSeparatedPipe } from "./comma-separated.pipe";
-import { GroupIconPipe } from "./group-icon.pipe";
 import { IconToggleComponent } from "./icon-toggle/icon-toggle.component";
 import { KnobComponent } from './knob/knob.component';
 import { LightVizComponent } from "./light-viz/light-viz.component";
 import { LogoComponent } from "./logo/logo.component";
-import { RelativePipe } from "./relative.pipe";
 import { ScheduleComponent } from './schedule/schedule.component';
 import { TitlebarComponent } from './titlebar/titlebar.component';
-import { u16toFloatPipe } from "./u16-to-float.pipe";
 
 @NgModule({
 	imports: [
@@ -37,27 +32,20 @@ import { u16toFloatPipe } from "./u16-to-float.pipe";
 		FormsModule,
 		HttpClientModule,
 		MatButtonModule,
-		MatCheckboxModule,
-		MatExpansionModule,
 		MatIconModule,
 		MatRippleModule,
-		MatTabsModule,
-		MatToolbarModule,
 		MatTooltipModule,
+		UtilityModule,
 	],
 	declarations: [
 		AppComponent,
 		BulbComponent,
 		ColorComponent,
-		CommaSeparatedPipe,
-		GroupIconPipe,
 		IconToggleComponent,
 		KnobComponent,
 		LightVizComponent,
 		LogoComponent,
-		RelativePipe,
 		ScheduleComponent,
-		u16toFloatPipe,
 		TitlebarComponent,
 	],
 	bootstrap: [

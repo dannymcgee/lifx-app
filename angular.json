@@ -226,6 +226,21 @@
 					}
 				}
 			}
+		},
+		"math": {
+			"root": "libs/math",
+			"sourceRoot": "libs/math/src",
+			"projectType": "library",
+			"architect": {
+				"test": {
+					"builder": "@nrwl/jest:jest",
+					"outputs": ["coverage/libs/math"],
+					"options": {
+						"jestConfig": "libs/math/jest.config.js",
+						"passWithNoTests": true
+					}
+				}
+			}
 		}
 	}
 }

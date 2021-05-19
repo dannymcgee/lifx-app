@@ -1,6 +1,5 @@
 import { clamp } from "./clamp";
 
-// TODO: This is kind of a terrible name
 export class Stepper<T> {
 	private _data: T[];
 	private get _len(): number {
