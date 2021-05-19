@@ -6,14 +6,15 @@
 	$foreground: map-get($config, foreground);
 
 	.lifx-bulb {
-		&__header {
-			background: mat-color($background, tooltip, 0.5);
+		background: mat-color($background, 600);
+
+		&__title {
+			background: mat-color($background, 600);
+			color: mat-color($foreground, secondary-text);
+			mix-blend-mode: screen;
 		}
-			&__title {
-				color: mat-color($foreground, secondary-text);
-			}
-			&__last-seen {
-				color: mat-color($foreground, disabled);
-			}
+		&__last-seen {
+			color: mat-color($foreground, disabled);
+		}
 	}
 }

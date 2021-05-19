@@ -2,8 +2,7 @@
 @import "lib";
 
 .lifx-knob {
-	@include flex(center);
-	flex-direction: column;
+	@include flex(column, center);
 	width: 32px;
 	position: relative;
 	cursor: grab;
@@ -11,34 +10,33 @@
 	&:focus {
 		outline: none !important;
 	}
+	&.disabled {
+		pointer-events: none;
+	}
 
 	&__focus-ripple {
-		@include circle(32px);
+		width: 100%;
 		position: absolute;
 		top: 0;
 		overflow: visible;
 	}
 
 	&__knob {
-		@include circle(32px);
+		@include circle(100%);
 		position: relative;
 		overflow: visible;
 	}
 		&__meter {
-			position: absolute;
-			top: -8px;
-			right: -8px;
-			bottom: -8px;
-			left: -8px;
+			@include absolute-fill;
 			fill: transparent;
 
 			circle {
 				stroke-width: 4px;
-				transform: rotate(128deg);
+				transform: rotate(135deg);
 				transform-origin: center;
 
 				&.empty {
-					stroke-dasharray: 90 200;
+					stroke-dasharray: var(--total-dasharray);
 				}
 				&.filled {
 					stroke-dasharray: var(--filled-dasharray);
@@ -47,10 +45,14 @@
 		}
 
 	&__label {
-		max-width: 100%;
-		overflow: visible;
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
 		font-size: 12px;
+		line-height: 1;
 		font-weight: 500;
-		transition: color 200ms linear;
+		white-space: nowrap;
+		pointer-events: none;
 	}
 }

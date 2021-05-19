@@ -1,10 +1,11 @@
 @import "lib";
 
 .lifx-icon-toggle {
-	@include flex(center, center);
+	@include flex(row, center, center);
 	position: relative;
 	overflow: visible;
 	transition: color 200ms linear;
+	cursor: pointer;
 
 	&:focus {
 		outline: none !important;

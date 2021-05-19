@@ -1,9 +1,7 @@
 @import "lib";
 
 :host {
-	@include flex(center, center);
-	width: 72px;
-	padding-bottom: 20px;
+	@include flex(row, center, center);
 }
 
 .light-stack {
@@ -15,7 +13,7 @@
 		@include absolute-fill;
 	}
 
-	&__color {
+	&__color + &__color {
 		mix-blend-mode: color-dodge;
 	}
 

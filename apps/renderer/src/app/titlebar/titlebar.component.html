@@ -1,0 +1,22 @@
+<lifx-logo class="lifx-titlebar__logo"></lifx-logo>
+<div class="lifx-titlebar__drag-region"></div>
+<div class="lifx-titlebar__controls">
+	<button mat-icon-button
+		aria-label="Minimize"
+		(click)="minimize()"
+	>
+		<mat-icon inline>minimize</mat-icon>
+	</button>
+	<button mat-icon-button
+		aria-label="Maximize"
+		(click)="toggleMaximized()"
+	>
+		<mat-icon inline>web_asset</mat-icon>
+	</button>
+	<button mat-icon-button class="close"
+		aria-label="Close"
+		(click)="close()"
+	>
+		<mat-icon inline>close</mat-icon>
+	</button>
+</div>

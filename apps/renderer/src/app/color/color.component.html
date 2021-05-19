@@ -1,13 +1,11 @@
-<lifx-light-viz class="lifx-color__viz"
-	[brightness]="value?.brightness | u16toFloat"
-	[kelvin]="$any(value)?.kelvin"
-></lifx-light-viz>
-
-<lifx-knob id="{{ id }}_brightness"
+<lifx-knob class="lifx-color__knob"
+	id="{{ id }}_brightness"
 	*ngIf="value?.brightness != null && !readOnly"
+	[size]="size"
 	min="0" max="65535"
 	kbStep="655" kbCoarse="6553" kbFine="1"
 	ptrStep="3" ptrCoarse="6" ptrFine="0.5"
+	[disabled]="disabled"
 	[value]="value.brightness"
 	(valueChange)="updateBrightness($event)"
 >
@@ -17,11 +15,14 @@
 	{{ value.brightness | u16toFloat | percent }}
 </lifx-knob>
 
-<lifx-knob id="{{ id }}_kelvin"
+<lifx-knob class="lifx-color__knob"
+	id="{{ id }}_kelvin"
 	*ngIf="$any(value)?.kelvin && !readOnly"
+	[size]="size"
 	min="1500" max="9000"
 	kbStep="50" kbCoarse="500" kbFine="1"
-	ptrStep="2" ptrCoarse="10" ptrFine="0.1"
+	ptrStep="2" ptrCoarse="10" ptrFine="0.05"
+	[disabled]="disabled"
 	[value]="$any(value).kelvin"
 	(valueChange)="updateKelvin($event)"
 >

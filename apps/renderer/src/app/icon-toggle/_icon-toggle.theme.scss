@@ -7,7 +7,7 @@
 	$foreground: map-get($config, foreground);
 
 	.lifx-icon-toggle {
-		color: mat-color($foreground, disabled);
+		color: mat-color($foreground, secondary-text);
 
 		&.primary {
 			--active-color: #{mat-color($primary)};

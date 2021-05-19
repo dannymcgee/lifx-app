@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, HostBinding, Input, ViewEncapsulation } f
 import { NgControl } from "@angular/forms";
 
 import { HSBK, Kelvin, u16 } from "@lifx/api";
+import { Coerce } from "../coerce.decorator";
 import { FormControl } from "../forms.interface";
 
 const U16_MAX = 65_535;
@@ -17,6 +18,12 @@ export class ColorComponent implements FormControl<HSBK> {
 
 	@Input() id: string;
 	@Input() readOnly: boolean;
+
+	@HostBinding("style.height.px")
+	@Input() @Coerce(Number) size = 36;
+
+	@HostBinding("style.gap.px")
+	get gap() { return this.size * 0.5625; }
 
 	get value(): HSBK|null { return this._value ?? null; }
 	private _value?: HSBK;

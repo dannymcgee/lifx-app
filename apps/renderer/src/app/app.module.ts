@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // 3rd-Party UI Imports
 import { MatRippleModule } from "@angular/material/core";
+import { MatButtonModule } from "@angular/material/button";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatIconModule } from "@angular/material/icon";
@@ -23,16 +24,19 @@ import { GroupIconPipe } from "./group-icon.pipe";
 import { IconToggleComponent } from "./icon-toggle/icon-toggle.component";
 import { KnobComponent } from './knob/knob.component';
 import { LightVizComponent } from "./light-viz/light-viz.component";
+import { LogoComponent } from "./logo/logo.component";
 import { RelativePipe } from "./relative.pipe";
 import { ScheduleComponent } from './schedule/schedule.component';
+import { TitlebarComponent } from './titlebar/titlebar.component';
 import { u16toFloatPipe } from "./u16-to-float.pipe";
 
 @NgModule({
 	imports: [
+		BrowserAnimationsModule,
 		BrowserModule,
 		FormsModule,
 		HttpClientModule,
-		BrowserAnimationsModule,
+		MatButtonModule,
 		MatCheckboxModule,
 		MatExpansionModule,
 		MatIconModule,
@@ -50,9 +54,11 @@ import { u16toFloatPipe } from "./u16-to-float.pipe";
 		IconToggleComponent,
 		KnobComponent,
 		LightVizComponent,
+		LogoComponent,
 		RelativePipe,
 		ScheduleComponent,
 		u16toFloatPipe,
+		TitlebarComponent,
 	],
 	bootstrap: [
 		AppComponent

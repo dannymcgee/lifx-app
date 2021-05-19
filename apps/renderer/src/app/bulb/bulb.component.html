@@ -3,13 +3,18 @@
 		<span class="lifx-bulb__title">
 			{{ name }}
 		</span>
-		<span class="lifx-bulb__last-seen">
-			Last seen {{ lastSeen | relative }}
-		</span>
+
+		<lifx-color class="lifx-bulb__color"
+			*ngIf="color && !readOnly"
+			[id]="id"
+			size="28"
+			[(ngModel)]="color"
+		></lifx-color>
 	</div>
-	<lifx-color class="lifx-bulb__color"
-		*ngIf="color && !readOnly"
-		[id]="id"
-		[(ngModel)]="color"
-	></lifx-color>
+
+	<lifx-light-viz class="lifx-bulb__light-viz"
+		*ngIf="color"
+		[brightness]="color.brightness | u16toFloat"
+		[kelvin]="color.kelvin"
+	></lifx-light-viz>
 </ng-container>

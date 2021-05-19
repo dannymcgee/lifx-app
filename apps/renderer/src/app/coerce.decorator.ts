@@ -17,7 +17,7 @@ export function Coerce(type: typeof Number | typeof Boolean): PropertyDecorator 
 				break;
 		}
 
-		Object.defineProperty(proto, fieldKey, {
+		Object.defineProperty(proto, propName, {
 			get(): Coerced<typeof type> {
 				return this[fieldKey];
 			},

@@ -16,8 +16,11 @@ import {
 } from "@angular/core";
 import { MatRipple, RippleRef } from "@angular/material/core";
 import { MatTooltip } from "@angular/material/tooltip";
+
 import { fromEvent, interval, merge } from "rxjs";
 import { filter, first, takeUntil } from "rxjs/operators";
+
+import { Coerce } from "../coerce.decorator";
 
 @Component({
 	selector: "lifx-icon-toggle",
@@ -47,6 +50,14 @@ export class IconToggleComponent implements OnInit, OnDestroy {
 	@Input() disabled = false;
 
 	@Input() color: "primary"|"accent" = "primary";
+
+	@HostBinding("style.width.px")
+	@HostBinding("style.height.px")
+	@Input() @Coerce(Number) size = 24;
+
+	@HostBinding("style.border-radius.px")
+	get radius() { return this.size / 2; }
+
 	@Input() icon: string;
 	@Input()
 	get uncheckedIcon(): string { return this._unchckedIcon ?? this.icon; }
@@ -101,7 +112,7 @@ export class IconToggleComponent implements OnInit, OnDestroy {
 						centered: true,
 						persistent: true,
 						terminateOnPointerUp: false,
-						radius: 20,
+						radius: Math.SQRT2 * this.radius,
 						animation: {
 							enterDuration: 100,
 							exitDuration: 200,
@@ -136,7 +147,7 @@ export class IconToggleComponent implements OnInit, OnDestroy {
 		let ripple = this.activeRipple.launch({
 			centered: true,
 			persistent: true,
-			radius: 20,
+			radius: Math.SQRT2 * this.radius,
 			animation: {
 				enterDuration: 200,
 				exitDuration: 400,

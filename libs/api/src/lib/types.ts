@@ -69,4 +69,7 @@ export interface ElectronIPC {
 	discovery(): Promise<Bulb[]>;
 	getColor(id: string): Promise<HSBK>;
 	setColor(targets: Record<string, HSBK>, seconds: number): Promise<void>;
+	closeWindow(): void;
+	minimizeWindow(): void;
+	toggleMaximized(): Promise<boolean>;
 }

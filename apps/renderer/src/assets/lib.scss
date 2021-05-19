@@ -8,8 +8,9 @@
 	border-radius: $size / 2;
 }
 
-@mixin flex($alignment, $justification: flex-start) {
+@mixin flex($direction, $alignment, $justification: flex-start) {
 	display: flex;
+	flex-direction: $direction;
 	align-items: $alignment;
 	justify-content: $justification;
 }
@@ -34,4 +35,10 @@
 		top: calc(50% - #{$size / 2});
 		left: calc(50% - #{$size / 2});
 	}
+}
+
+@mixin vcenter-text {
+	position: relative;
+	top: -0.1333em;
+	line-height: 1;
 }

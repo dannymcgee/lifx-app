@@ -1,25 +1,41 @@
 <ng-container *ngIf="(groups$ | async) as groups">
 <ng-container *ngIf="(bulbs$ | async) as bulbs">
 
+<lifx-titlebar></lifx-titlebar>
+
 <main class="main-content">
 
-	<mat-expansion-panel class="lifx-group"
+	<section class="lifx-group"
 		*ngFor="let group of groups"
-		#panel="matExpansionPanel"
 	>
-		<mat-expansion-panel-header class="lifx-group__header">
-
-			<mat-panel-title class="lifx-group__title">
+		<div class="lifx-group__header">
+			<div class="lifx-group__summary">
 				<mat-icon class="lifx-group__icon">
 					{{ group | groupIcon }}
 				</mat-icon>
-				<span>{{ group }}</span>
-			</mat-panel-title>
 
-			<mat-panel-description>
-				<lifx-icon-toggle
+				<span class="lifx-group__title">
+					{{ group }}
+				</span>
+
+				<span class="lifx-group__badge">
+					<span>{{ bulbs[group].length }}</span>
+				</span>
+			</div>
+
+			<div class="lifx-group__toolbar">
+				<lifx-color class="lifx-group__color"
+					[id]="group"
+					size="32"
+					[disabled]="!groupLocks[group]"
+					[(ngModel)]="groupColors[group]"
+					(ngModelChange)="setGroupColor(group, $event)"
+				></lifx-color>
+
+				<lifx-icon-toggle class="lifx-group__sync-toggle"
 					id="{{ group }}_sync-toggle"
 					color="accent"
+					size="28"
 					icon="link"
 					uncheckedIcon="link_off"
 					label="Synchronize these lights"
@@ -28,33 +44,27 @@
 						of each light independently."
 					[(value)]="groupLocks[group]"
 				></lifx-icon-toggle>
-			</mat-panel-description>
+			</div>
+		</div>
 
-		</mat-expansion-panel-header>
-		<section class="lifx-group__body" *matExpansionPanelContent>
+		<lifx-light-viz class="lifx-group__light-viz"
+			*ngIf="groupLocks[group]
+			else unsyncedTemplate"
+			[brightness]="groupColors[group]?.brightness | u16toFloat"
+			[kelvin]="$any(groupColors[group])?.kelvin"
+		></lifx-light-viz>
 
-			<ng-container *ngIf="groupLocks[group]">
-				<div class="lifx-group__bulb-names">
-					{{ bulbs[group] | commaSep : 'name' }}
-				</div>
-				<lifx-color class="lifx-group__color"
-					[id]="group"
-					[(ngModel)]="groupColors[group]"
-					(ngModelChange)="setGroupColor(group, $event)"
-				></lifx-color>
-			</ng-container>
-
-			<ng-container *ngIf="!groupLocks[group]">
+		<ng-template #unsyncedTemplate>
+			<section class="lifx-group__body">
 				<lifx-bulb class="lifx-group__bulb"
 					*ngFor="let bulb of bulbs[group]
 						trackBy: trackById"
 					[id]="bulb.id"
 					[readOnly]="groupLocks[group]"
 				></lifx-bulb>
-			</ng-container>
-
-		</section>
-	</mat-expansion-panel>
+			</section>
+		</ng-template>
+	</section>
 
 </main>
 

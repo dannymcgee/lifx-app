@@ -44,6 +44,15 @@ export class KnobComponent implements OnInit, OnDestroy {
 	@HostBinding("class") hostClass = "lifx-knob";
 	@HostBinding() @Input() id: string;
 
+	@HostBinding("style.width.px")
+	@Input() @Coerce(Number) size: number;
+
+	@HostBinding("style.height.px")
+	get height() { return this.size + 12; }
+
+	get radius() { return (this.size - 4) / 2; }
+	get circumference() { return 2 * Math.PI * this.radius; }
+
 	@Input() @Coerce(Number) min: number;
 	@Input() @Coerce(Number) max: number;
 
@@ -87,13 +96,20 @@ export class KnobComponent implements OnInit, OnDestroy {
 	}
 
 	@HostBinding("style.--filled-dasharray")
-	get filledDasharray(): string {
+	get filledDasharray() {
+		let knobRange = 0.75 * this.circumference;
 		let filled = remap(
 			this.value,
 			[this.min, this.max],
-			[0, 90]
+			[0, knobRange]
 		);
-		return `${filled} 200`;
+		return `${filled} ${this.circumference}`;
+	}
+
+	@HostBinding("style.--total-dasharray")
+	get totalDasharray() {
+		let knobRange = 0.75 * this.circumference;
+		return `${knobRange} ${this.circumference}`;
 	}
 
 	@ViewChild("focusRipple", { read: MatRipple })
@@ -120,7 +136,7 @@ export class KnobComponent implements OnInit, OnDestroy {
 						persistent: true,
 						terminateOnPointerUp: false,
 						centered: true,
-						radius: 32,
+						radius: Math.SQRT2 * this.size / 2,
 					});
 				}
 				if (origin === null) {

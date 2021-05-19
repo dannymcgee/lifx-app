@@ -15,18 +15,32 @@
 
 		&__meter circle {
 			&.empty {
-				stroke: mat-color($background, 500);
+				stroke: mat-color($background, 200);
+				transition: stroke 100ms linear;
+
+				#{$host}.disabled & {
+					stroke: mat-color($background, 400);
+				}
 			}
 			&.filled {
 				stroke: mat-color($accent);
+				transition: opacity 100ms linear;
+
+				#{$host}.disabled & {
+					opacity: 0;
+				}
 			}
 		}
 
 		&__label {
 			color: mat-color($foreground, secondary-text);
+			transition: color 100ms linear;
 
 			#{$host}.cdk-focused & {
 				color: mat-color($foreground, text);
+			}
+			#{$host}.disabled & {
+				color: mat-color($foreground, disabled);
 			}
 		}
 	}

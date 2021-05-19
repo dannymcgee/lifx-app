@@ -68,6 +68,7 @@ namespace app {
 			width: width,
 			height: height,
 			show: false,
+			frame: false,
 			webPreferences: {
 				contextIsolation: true,
 				backgroundThrottling: false,

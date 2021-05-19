@@ -17,6 +17,15 @@ const api: ElectronIPC = {
 			duration: { secs },
 		});
 	},
+	closeWindow() {
+		return ipcRenderer.invoke("window-close");
+	},
+	minimizeWindow() {
+		return ipcRenderer.invoke("window-minimize");
+	},
+	toggleMaximized(): Promise<boolean> {
+		return ipcRenderer.invoke("window-toggle-max");
+	}
 }
 
 contextBridge.exposeInMainWorld("electron", api);

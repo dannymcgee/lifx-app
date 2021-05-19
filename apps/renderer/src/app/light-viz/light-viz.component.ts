@@ -9,7 +9,7 @@ import chroma from "chroma-js";
 @Component({
 	selector: "lifx-light-viz",
 	templateUrl: "./light-viz.component.html",
-	"styleUrls": ["./light-viz.component.scss"],
+	styleUrls: ["./light-viz.component.scss"],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LightVizComponent {
@@ -39,8 +39,9 @@ export class LightVizComponent {
 		return `
 			0 0 ${innerSize}px 0 ${this._alpha(innerBright)},
 			0 0 ${innerSize}px 0 ${this._alpha(innerBright)},
-			0 0 ${size * 5}px ${size * 2.5}px ${this.color},
-			0 0 ${size * 10}px ${size * 5}px ${this._alpha(this.brightness / 2)}
+			0 0 ${size * 6}px ${size * 2}px ${this.color},
+			0 0 ${size * 12}px ${size * 4}px ${this._alpha(this.brightness / 2)},
+			0 0 ${size * 24}px ${size * 8}px ${this._alpha(this.brightness / 1.5)}
 		`
 			.trim()
 			.replace(/\s+/g, " ");

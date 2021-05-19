@@ -1,5 +1,6 @@
 @import "./theme";
 @import "./typography";
+@import "lib";
 
 *, *::before, *::after {
 	box-sizing: border-box;
@@ -9,4 +10,8 @@ html, body {
 }
 body {
 	margin: 0;
+}
+
+.mat-icon-button .mat-button-wrapper {
+	@include flex(row, center, center);
 }

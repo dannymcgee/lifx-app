@@ -1,21 +1,23 @@
 <div class="lifx-knob__focus-ripple"
 	#focusRipple
 	matRipple
+	[style.height.px]="size"
 ></div>
 
 <div class="lifx-knob__knob">
 	<svg class="lifx-knob__meter"
-		viewBox="0 0 48 48"
+		[attr.width]="size"
+		[attr.height]="size"
 	>
 		<circle class="empty"
-			cx="24"
-			cy="24"
-			r="18"
+			cx="50%"
+			cy="50%"
+			[attr.r]="radius"
 		/>
 		<circle class="filled"
-			cx="24"
-			cy="24"
-			r="18"
+			cx="50%"
+			cy="50%"
+			[attr.r]="radius"
 		/>
 	</svg>
 </div>

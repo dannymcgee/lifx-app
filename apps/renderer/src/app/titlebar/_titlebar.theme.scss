@@ -1,0 +1,29 @@
+@import "~@angular/material/theming";
+
+@mixin lifx-titlebar-theme($config-or-theme) {
+	$config: mat-get-color-config($config-or-theme);
+	$background: map-get($config, background);
+	$foreground: map-get($config, foreground);
+	$warn: map-get($config, warn);
+
+	.lifx-titlebar {
+		background: mat-color($background, app-bar);
+
+		&__logo {
+			color: mat-color($foreground, text);
+		}
+
+		&__controls .mat-icon-button {
+			color: mat-color($foreground, icon);
+			transition: color 100ms linear;
+
+			&:hover {
+				color: mat-color($foreground, text);
+
+				&.close {
+					color: mat-color($warn);
+				}
+			}
+		}
+	}
+}

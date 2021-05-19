@@ -1,10 +1,11 @@
 @import "~@angular/material/theming";
 
 @import "./app/app.theme";
-@import "./app/color/color.theme";
-@import "./app/knob/knob.theme";
-@import "./app/icon-toggle/icon-toggle.theme";
 @import "./app/bulb/bulb.theme";
+@import "./app/color/color.theme";
+@import "./app/icon-toggle/icon-toggle.theme";
+@import "./app/knob/knob.theme";
+@import "./app/titlebar/titlebar.theme";
 
 @include mat-core();
 
@@ -74,21 +75,21 @@ $lifx-accent: (
 	)
 );
 
-$lifx-neutral: (
-	50:  #FFFFFF,
-	100: #CAC7CF,
-	200: #8888A2,
-	300: #6B6B77,
-	400: #444451,
-	500: #1C1C20,
-	600: #121216,
-	700: #191919,
-	800: #05050A,
+$lifx-background: (
+	50:  #717178,
+	100: #5E5E66,
+	200: #4D4C54,
+	300: #3B3B43,
+	400: #2B2B33,
+	500: #23242A,
+	600: #1C1C21,
+	700: #141419,
+	800: #0A0A0F,
 	900: #000000,
 	contrast: (
-		50:  $dark-primary-text,
-		100: $dark-primary-text,
-		200: $dark-primary-text,
+		50:  $light-primary-text,
+		100: $light-primary-text,
+		200: $light-primary-text,
 		300: $light-primary-text,
 		400: $light-primary-text,
 		500: $light-primary-text,
@@ -99,48 +100,83 @@ $lifx-neutral: (
 	)
 );
 
+$lifx-foreground: (
+	50:  #EBEBED,
+	100: #D3D3D8,
+	200: #BCBCC2,
+	300: #A5A5AC,
+	400: #8D8D96,
+	500: #787884,
+	600: #646471,
+	700: #51515C,
+	800: #3E3E48,
+	900: #2B2B33,
+	contrast: (
+		50:  $dark-primary-text,
+		100: $dark-primary-text,
+		200: $dark-primary-text,
+		300: $dark-primary-text,
+		400: $dark-primary-text,
+		500: $dark-primary-text,
+		600: $dark-primary-text,
+		700: $dark-primary-text,
+		800: $dark-primary-text,
+		900: $dark-primary-text,
+	)
+);
+
 $mat-dark-theme-background: (
-	50:  map-get($lifx-neutral, 900),
-	100: map-get($lifx-neutral, 800),
-	200: map-get($lifx-neutral, 700),
-	300: map-get($lifx-neutral, 600),
-	400: map-get($lifx-neutral, 500),
-	500: map-get($lifx-neutral, 400),
-	600: map-get($lifx-neutral, 300),
-	700: map-get($lifx-neutral, 200),
-	800: map-get($lifx-neutral, 100),
-	900: map-get($lifx-neutral, 50),
-	status-bar:               map-get($lifx-neutral, 900),
-	app-bar:                  map-get($lifx-neutral, 800),
-	background:               map-get($lifx-neutral, 600),
+	50:  map-get($lifx-background, 50),
+	100: map-get($lifx-background, 100),
+	200: map-get($lifx-background, 200),
+	300: map-get($lifx-background, 300),
+	400: map-get($lifx-background, 400),
+	500: map-get($lifx-background, 500),
+	600: map-get($lifx-background, 600),
+	700: map-get($lifx-background, 700),
+	800: map-get($lifx-background, 800),
+	900: map-get($lifx-background, 900),
+	status-bar:               map-get($lifx-background, 900),
+	app-bar:                  map-get($lifx-background, 800),
+	background:               map-get($lifx-background, 800),
 	hover:                    mat-color($lifx-primary, 200, 0.04),
-	card:                     map-get($lifx-neutral, 500),
-	dialog:                   map-get($lifx-neutral, 500),
-	disabled-button:          map-get($lifx-neutral, 400),
-	raised-button:            map-get($lifx-neutral, 400),
+	card:                     map-get($lifx-background, 500),
+	dialog:                   map-get($lifx-background, 500),
+	disabled-button:          map-get($lifx-background, 400),
+	raised-button:            map-get($lifx-background, 400),
 	focused-button:           mat-color($lifx-primary, 200, 0.12),
 	selected-button:          mat-color($lifx-primary, 200, 0.08),
-	selected-disabled-button: map-get($lifx-neutral, 800),
-	disabled-button-toggle:   map-get($lifx-neutral, 900),
-	unselected-chip:          map-get($lifx-neutral, 400),
-	disabled-list-option:     map-get($lifx-neutral, 700),
-	tooltip:                  map-get($lifx-neutral, 400),
+	selected-disabled-button: map-get($lifx-background, 800),
+	disabled-button-toggle:   map-get($lifx-background, 900),
+	unselected-chip:          map-get($lifx-background, 400),
+	disabled-list-option:     map-get($lifx-background, 700),
+	tooltip:                  map-get($lifx-background, 400),
 );
 
 $mat-dark-theme-foreground: (
-	base:              map-get($lifx-neutral, 50),
-	divider:           map-get($lifx-neutral, 500),
-	dividers:          map-get($lifx-neutral, 500),
-	disabled:          map-get($lifx-neutral, 300),
+	50:  map-get($lifx-foreground, 50),
+	100: map-get($lifx-foreground, 100),
+	200: map-get($lifx-foreground, 200),
+	300: map-get($lifx-foreground, 300),
+	400: map-get($lifx-foreground, 400),
+	500: map-get($lifx-foreground, 500),
+	600: map-get($lifx-foreground, 600),
+	700: map-get($lifx-foreground, 700),
+	800: map-get($lifx-foreground, 800),
+	900: map-get($lifx-foreground, 900),
+	base:              map-get($lifx-foreground, 50),
+	divider:           map-get($lifx-foreground, 700),
+	dividers:          map-get($lifx-foreground, 700),
+	disabled:          map-get($lifx-foreground, 700),
 	disabled-button:   rgba(white, 0.3),
-	disabled-text:     map-get($lifx-neutral, 300),
-	elevation:         map-get($lifx-neutral, 900),
-	hint-text:         map-get($lifx-neutral, 300),
-	secondary-text:    map-get($lifx-neutral, 100),
-	icon:              map-get($lifx-neutral, 200),
-	icons:             map-get($lifx-neutral, 200),
-	text:              map-get($lifx-neutral, 50),
-	slider-min:        map-get($lifx-neutral, 50),
+	disabled-text:     map-get($lifx-foreground, 700),
+	elevation:         black,
+	hint-text:         map-get($lifx-foreground, 600),
+	secondary-text:    map-get($lifx-foreground, 300),
+	icon:              map-get($lifx-foreground, 400),
+	icons:             map-get($lifx-foreground, 400),
+	text:              map-get($lifx-foreground, 50),
+	slider-min:        map-get($lifx-foreground, 50),
 	slider-off:        rgba(white, 0.3),
 	slider-off-active: rgba(white, 0.3),
 );
@@ -158,6 +194,7 @@ $lifx-theme: mat-dark-theme((
 ));
 
 @include angular-material-theme($lifx-theme);
+@include mat-button-color($lifx-theme);
 @include mat-checkbox-color($lifx-theme);
 @include mat-expansion-panel-color($lifx-theme);
 @include mat-tabs-color($lifx-theme);
@@ -168,3 +205,4 @@ $lifx-theme: mat-dark-theme((
 @include lifx-color-theme($lifx-theme);
 @include lifx-icon-toggle-theme($lifx-theme);
 @include lifx-knob-theme($lifx-theme);
+@include lifx-titlebar-theme($lifx-theme);
