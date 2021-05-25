@@ -6,6 +6,7 @@ import {
 	ViewChild,
 } from '@angular/core';
 
+import chroma from "chroma-js";
 import * as createContext from "gl-context";
 import * as loadShader from "gl-shader";
 
@@ -35,6 +36,14 @@ export class OglLightVizComponent implements OnInit {
 	@Input() brightness: number;
 	@Input() kelvin: number;
 
+	private get _baseColor() {
+		return (chroma
+			.temperature(this.kelvin)
+			.rgb(false)
+			.map(channel => channel / 255)
+		) as [number, number, number];
+	}
+
 	@ViewChild("canvasRef", { static: true })
 	private _canvasRef: ElementRef<HTMLCanvasElement>;
 	private get _canvas() { return this._canvasRef.nativeElement; }
@@ -58,9 +67,12 @@ export class OglLightVizComponent implements OnInit {
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-			-1,  0,  0,
-			 0, -1,  0,
+			-1,  1,  0,
+			-1, -1,  0,
 			 1,  1,  0,
+			-1, -1,  0,
+			 1,  1,  0,
+			 1, -1,  0,
 		]), gl.STATIC_DRAW);
 	}
 
@@ -70,8 +82,9 @@ export class OglLightVizComponent implements OnInit {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer);
 
 		this._shader.attributes.position.pointer();
-		this._shader.uniforms.t += 0.01;
+		this._shader.uniforms.baseColor = this._baseColor;
+		this._shader.uniforms.brightness = this.brightness;
 
-		gl.drawArrays(gl.TRIANGLES, 0, 3);
+		gl.drawArrays(gl.TRIANGLES, 0, 6);
 	}
 }
