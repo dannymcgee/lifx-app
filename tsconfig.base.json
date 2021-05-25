@@ -14,6 +14,10 @@
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
+		"typeRoots": [
+			"node_modules/@types",
+			"apps/renderer/src/@types"
+		],
 		"paths": {
 			"@lifx/api": ["libs/api/src/index.ts"],
 			"@lifx/std": ["libs/std/src/index.ts"],

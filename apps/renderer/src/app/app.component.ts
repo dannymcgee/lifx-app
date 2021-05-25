@@ -27,6 +27,8 @@ export class AppComponent implements OnInit, OnDestroy {
 	groupScheduleEnabled: Record<string, boolean> = {};
 	groupColors: Record<string, HSBK> = {};
 
+	stops = ["#AD5910", "#2244FF"];
+
 	private _onDestroy$ = new Subject<void>();
 
 	constructor(
