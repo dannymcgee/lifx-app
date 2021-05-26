@@ -141,12 +141,19 @@
 							"optimization": true,
 							"extractLicenses": true,
 							"inspect": false,
-							"fileReplacements": [
-								{
-									"replace": "apps/main/src/environments/environment.ts",
-									"with": "apps/main/src/environments/environment.prod.ts"
-								}
-							]
+							"fileReplacements": [{
+								"replace": "apps/main/src/environments/environment.ts",
+								"with": "apps/main/src/environments/environment.prod.ts"
+							}]
+						},
+						"mockLights": {
+							"optimization": false,
+							"extractLicenses": false,
+							"inspect": true,
+							"fileReplacements": [{
+								"replace": "apps/main/src/environments/environment.ts",
+								"with": "apps/main/src/environments/environment.mock.ts"
+							}]
 						}
 					}
 				},

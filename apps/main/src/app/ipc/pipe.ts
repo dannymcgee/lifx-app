@@ -3,6 +3,7 @@ import { filter, first, map } from "rxjs/operators";
 import { Readable, Writable } from "stream";
 import chalk from "chalk";
 import cp from "child_process";
+import { promises as fs } from "fs";
 import sub from "date-fns/sub";
 
 import {
@@ -16,6 +17,10 @@ import {
 } from "@lifx/api";
 import { Queue } from "@lifx/std";
 import log from "./log";
+import { environment } from "../../environments/environment";
+import { environment as mockEnvironment } from "../../environments/environment.mock";
+
+let env = environment;
 
 const NANOS_IN_SEC = 1_000_000_000;
 
@@ -41,19 +46,32 @@ export class IpcPipe {
 	}
 
 	constructor(exePath: string) {
-		let proc = cp.spawn(exePath, {
-			stdio: ["pipe", "pipe", "inherit"],
-		})
-			.on("close", this._onClose)
-			.on("exit", this._onExit)
-			.on("error", this._onError);
+		(async () => {
+			// FIXME: Do this through a builder configuration (blocked by upstream issue)
+			try {
+				await fs.stat(exePath);
+			} catch {
+				env = mockEnvironment;
+				this._input = process.stdin;
+				this._output = process.stdout;
 
-		this._input = proc.stdout;
-		this._output = proc.stdin;
+				return;
+			}
 
-		this._input.on("data", this._parseInput);
+			let proc = cp.spawn(exePath, {
+				stdio: ["pipe", "pipe", "inherit"],
+			})
+				.on("close", this._onClose)
+				.on("exit", this._onExit)
+				.on("error", this._onError);
 
-		setTimeout(this._processBacklog);
+			this._input = proc.stdout;
+			this._output = proc.stdin;
+
+			this._input.on("data", this._parseInput);
+
+			setTimeout(this._processBacklog);
+		})();
 	}
 
 	send(channel: Channel, payload?: Request[typeof channel]): this {
@@ -80,6 +98,10 @@ export class IpcPipe {
 			}
 		});
 
+		if (env.mock) setTimeout(() => {
+			this._mockResponse(channel, payload);
+		});
+
 		return this;
 	}
 
@@ -102,6 +124,35 @@ export class IpcPipe {
 		return this.recvAll(channel).pipe(first()) as any;
 	}
 
+	private _mockResponse(
+		channel: Channel,
+		payload?: Request[typeof channel],
+	) {
+		switch (channel) {
+			case Channel.Discovery: {
+				this._parseInput(JSON.stringify({
+					channel,
+					payload: {
+						[channel]: env.lights
+					},
+				}));
+				break;
+			}
+			case Channel.GetColor: {
+				break;
+			}
+			case Channel.SetColor: {
+				this._parseInput(JSON.stringify({
+					channel,
+					payload: {
+						[channel]: Object.keys(payload["values"]),
+					},
+				}));
+				break;
+			}
+		}
+	}
+
 	private _processBacklog = () => {
 		Object.entries(this._backlog)
 			.forEach(([chan, backlog]) => {
@@ -115,7 +166,7 @@ export class IpcPipe {
 		setTimeout(this._processBacklog);
 	}
 
-	private _parseInput = (buf: Buffer) => {
+	private _parseInput = (buf: Buffer|string) => {
 		let data = buf.toString();
 		let msg: Message;
 
@@ -176,6 +227,8 @@ export class IpcPipe {
 
 	private _fmtColor(data: any): HSBK | HSBK[] {
 		if (!data) return null;
+		if (env.mock) return data;
+
 		if (data.Single) {
 			let c = data.Single;
 			if (c.saturation) return {

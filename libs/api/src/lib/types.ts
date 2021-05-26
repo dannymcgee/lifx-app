@@ -10,8 +10,8 @@ export enum Channel {
 }
 
 export enum PowerLevel {
-	StandBy,
-	Enabled,
+	StandBy = 0,
+	Enabled = 1,
 }
 
 export type u16 = number;
