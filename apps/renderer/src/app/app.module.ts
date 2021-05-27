@@ -20,8 +20,9 @@ import { BulbComponent } from "./bulb/bulb.component";
 import { ColorComponent } from "./color/color.component";
 import { IconToggleComponent } from "./icon-toggle/icon-toggle.component";
 import { KnobComponent } from './knob/knob.component';
-import { LightVizComponent } from "./light-viz/light-viz.component";
+// import { CssLightVizComponent } from "./css-light-viz/css-light-viz.component";
 import { LogoComponent } from "./logo/logo.component";
+import { LightVizComponent } from './light-viz/light-viz.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { TitlebarComponent } from './titlebar/titlebar.component';
 
@@ -41,10 +42,12 @@ import { TitlebarComponent } from './titlebar/titlebar.component';
 		AppComponent,
 		BulbComponent,
 		ColorComponent,
+		// TODO: Enable this as a fallback for low-spec systems?
+		// CssLightVizComponent,
 		IconToggleComponent,
 		KnobComponent,
-		LightVizComponent,
 		LogoComponent,
+		LightVizComponent,
 		ScheduleComponent,
 		TitlebarComponent,
 	],

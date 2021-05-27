@@ -9,6 +9,8 @@
 	&__header {
 		@include flex(row, center, space-between);
 		padding: 12px 24px 0 12px;
+		position: relative;
+		z-index: 1;
 	}
 		&__title {
 			@include flex(row, center);

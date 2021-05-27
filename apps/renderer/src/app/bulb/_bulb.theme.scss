@@ -8,13 +8,16 @@
 	.lifx-bulb {
 		background: mat-color($background, 600);
 
-		&__title {
-			background: mat-color($background, 600);
-			color: mat-color($foreground, secondary-text);
+		&__header {
 			mix-blend-mode: screen;
 		}
-		&__last-seen {
-			color: mat-color($foreground, disabled);
-		}
+			&__title {
+				background: mat-color($background, 600);
+				color: mat-color($foreground, secondary-text);
+				mix-blend-mode: screen;
+			}
+			&__last-seen {
+				color: mat-color($foreground, disabled);
+			}
 	}
 }

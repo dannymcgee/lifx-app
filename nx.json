@@ -23,6 +23,7 @@
 		"back-end": { "tags": [] },
 		"api": { "tags": [] },
 		"std": { "tags": [] },
-		"math": { "tags": [] }
+		"math": { "tags": [] },
+		"webgl": { "tags": [] }
 	}
 }

@@ -20,6 +20,9 @@
 	}, {
 		"name": "std",
 		"path": "libs/std"
+	}, {
+		"name": "webgl",
+		"path": "libs/webgl"
 	}],
 	"settings": {
 		"jest.disabledWorkspaceFolders": [
@@ -29,6 +32,7 @@
 			"math",
 			"renderer",
 			"std",
+			"webgl",
 		],
 		"typescript.tsdk": "Workspace Root/node_modules/typescript/lib",
 		"angular.enable-strict-mode-prompt": false

@@ -4,7 +4,7 @@
 		"analytics": "677a3182-c0ff-4376-99d4-11abc6700bba",
 		"defaultCollection": "@nrwl/angular"
 	},
-	"defaultProject": "renderer",
+	"defaultProject": "main",
 	"schematics": {
 		"@nrwl/angular:application": {
 			"style": "scss",
@@ -27,8 +27,16 @@
 			"prefix": "lifx",
 			"architect": {
 				"build": {
-					"builder": "@angular-devkit/build-angular:browser",
+					"builder": "@angular-builders/custom-webpack:browser",
 					"options": {
+						"customWebpackConfig": {
+							"path": "./extra-webpack.config.js",
+							"mergeRules": {
+								"module": {
+									"rules": "prepend"
+								}
+							}
+						},
 						"outputPath": "dist/apps/renderer",
 						"index": "apps/renderer/src/index.html",
 						"main": "apps/renderer/src/main.ts",
@@ -76,7 +84,7 @@
 					}
 				},
 				"serve": {
-					"builder": "@angular-devkit/build-angular:dev-server",
+					"builder": "@angular-builders/custom-webpack:dev-server",
 					"options": {
 						"browserTarget": "renderer:build"
 					},
@@ -160,7 +168,8 @@
 				"serve": {
 					"builder": "nx-electron:execute",
 					"options": {
-						"buildTarget": "main:build"
+						"buildTarget": "main:build",
+						"waitUntilTargets": ["renderer:serve"]
 					}
 				},
 				"package": {
@@ -245,6 +254,31 @@
 					"options": {
 						"jestConfig": "libs/math/jest.config.js",
 						"passWithNoTests": true
+					}
+				}
+			}
+		},
+		"webgl": {
+			"root": "libs/webgl",
+			"sourceRoot": "libs/webgl/src",
+			"projectType": "library",
+			"architect": {
+				"test": {
+					"builder": "@nrwl/jest:jest",
+					"outputs": ["coverage/libs/webgl"],
+					"options": {
+						"jestConfig": "libs/webgl/jest.config.js",
+						"passWithNoTests": true
+					}
+				},
+				"build": {
+					"builder": "./tools/builders/webgl:build",
+					"outputs": ["{options.outputPath}"],
+					"options": {
+						"outputPath": "dist/libs/webgl",
+						"tsConfig": "libs/webgl/tsconfig.lib.json",
+						"main": "libs/webgl/src/index.ts",
+						"assets": []
 					}
 				}
 			}
