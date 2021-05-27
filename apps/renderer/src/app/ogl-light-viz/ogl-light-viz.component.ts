@@ -21,6 +21,7 @@ type LightVizAttributes = Attributes<{
 
 interface LightVizUniforms {
 	u_resolution: vec2;
+	u_randomSeed: vec2;
 	u_baseColor: vec3;
 	u_background: vec3;
 	u_brightness: float;
@@ -99,6 +100,10 @@ export class OglLightVizComponent implements OnInit {
 
 		this._shader.attributes.a_position.pointer();
 		this._shader.uniforms.u_resolution = this._resolution;
+		this._shader.uniforms.u_randomSeed = [
+			Math.random() * this._resolution[0],
+			Math.random() * this._resolution[1],
+		];
 		this._shader.uniforms.u_background = this._background;
 		this._shader.uniforms.u_baseColor = this._baseColor;
 		this._shader.uniforms.u_brightness = this.brightness;

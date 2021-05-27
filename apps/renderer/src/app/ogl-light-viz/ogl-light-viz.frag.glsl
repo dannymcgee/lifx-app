@@ -2,12 +2,14 @@ precision highp float;
 
 #pragma glslify: remap = require(@lifx/remap)
 #pragma glslify: debugRange = require(@lifx/debugRange)
+#pragma glslify: random = require(glsl-random/lowp)
 
 varying vec2 v_uv;
 varying float v_shortSide;
 varying float v_bulbRadius;
 
 uniform vec2 u_resolution;
+uniform vec2 u_randomSeed;
 uniform vec3 u_baseColor;
 uniform vec3 u_background;
 uniform float u_brightness;
@@ -46,7 +48,7 @@ void main() {
 	float halo = remap( dist,
 		remap( u_brightness,
 			0.0, 1.0,
-			0.75, 0.25 ),
+			0.4, 0.25 ),
 		1.0,
 		0.0, remap( u_brightness,
 			0.0, 1.0,
@@ -71,9 +73,9 @@ void main() {
 		minVal, ( maxVal * 0.333 ));
 
 	// Exponential radial gradient from center point
-	float haloExp = pow( halo, remap( u_brightness,
+	float haloExp = pow( halo, remap( pow( u_brightness, 0.5 ),
 		0.0, 1.0,
-		12.0, 6.0 ) );
+		2.0, 2.0 ) );
 	vec3 colorExp = u_baseColor * haloExp * pow( u_brightness, 0.75 );
 	vec3 colorHalo = u_baseColor * pow( haloTight, 3.0 ) * pow( u_brightness, 0.1 );
 
@@ -91,6 +93,7 @@ void main() {
 
 	vec3 bulb = bulbSphere();
 	color += bulb * pow( u_brightness, 0.5 );
+	color += ( random( gl_FragCoord.xy / u_randomSeed ) * 0.036 );
 
 	gl_FragColor = vec4( color, 1.0 );
 }

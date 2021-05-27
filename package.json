@@ -51,6 +51,7 @@
 		"gl-context": "^0.1.1",
 		"gl-matrix": "^3.3.0",
 		"gl-shader": "^4.2.1",
+		"glsl-random": "^0.0.5",
 		"glslify": "^7.1.1",
 		"rxjs": "~6.6.3",
 		"tslib": "^2.0.0",
