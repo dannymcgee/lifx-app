@@ -5,7 +5,7 @@ precision highp float;
 #pragma glslify: random = require(glsl-random/lowp)
 
 varying vec2 v_uv;
-varying float v_shortSide;
+varying float v_sideLength;
 varying float v_bulbRadius;
 
 uniform vec2 u_resolution;
@@ -20,8 +20,8 @@ float avg( vec3 vec ) {
 }
 
 float distFromCenter() {
-	float distX = (( u_resolution.x / 2.0 ) - gl_FragCoord.x ) / v_shortSide;
-	float distY = (( u_resolution.y / 2.0 ) - gl_FragCoord.y ) / v_shortSide;
+	float distX = (( u_resolution.x / 2.0 ) - gl_FragCoord.x ) / v_sideLength;
+	float distY = (( u_resolution.y / 2.0 ) - gl_FragCoord.y ) / v_sideLength;
 
 	return length( vec2(distX, distY) );
 }

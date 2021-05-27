@@ -47,14 +47,12 @@
 			</div>
 		</div>
 
-		<!-- <lifx-light-viz class="lifx-group__light-viz" -->
-		<lifx-ogl-light-viz class="lifx-group__light-viz"
+		<lifx-light-viz class="lifx-group__light-viz"
 			*ngIf="groupLocks[group]
 			else unsyncedTemplate"
 			[brightness]="groupColors[group]?.brightness | u16toFloat"
 			[kelvin]="$any(groupColors[group])?.kelvin"
-		></lifx-ogl-light-viz>
-		<!-- ></lifx-light-viz> -->
+		></lifx-light-viz>
 
 		<ng-template #unsyncedTemplate>
 			<section class="lifx-group__body">

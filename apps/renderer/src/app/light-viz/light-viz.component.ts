@@ -1,54 +1,126 @@
 import {
-	ChangeDetectionStrategy,
 	Component,
+	ElementRef,
+	HostListener,
 	Input,
-} from "@angular/core";
+	OnInit,
+	ViewChild,
+} from '@angular/core';
 
 import chroma from "chroma-js";
+import * as createContext from "gl-context";
+import * as loadShader from "gl-shader";
+
+import { Loop } from "../utility/loop.decorator";
+import vert from "./light-viz.vert.glsl";
+import frag from "./light-viz.frag.glsl";
+
+type LightVizAttributes = Attributes<{
+	a_position: vec3;
+}>
+
+interface LightVizUniforms {
+	u_resolution: vec2;
+	u_randomSeed: vec2;
+	u_baseColor: vec3;
+	u_background: vec3;
+	u_brightness: float;
+}
 
 @Component({
-	selector: "lifx-light-viz",
-	templateUrl: "./light-viz.component.html",
-	styleUrls: ["./light-viz.component.scss"],
-	changeDetection: ChangeDetectionStrategy.OnPush,
+	selector: 'lifx-light-viz',
+	template: `
+		<canvas class="canvas" #canvasRef></canvas>
+	`,
+	styles: [`
+		:host {
+			overflow: hidden;
+		}
+		:host,
+		.canvas {
+			display: block;
+			width: 100%;
+			height: 100%;
+
+		}
+	`],
 })
-export class LightVizComponent {
+export class LightVizComponent implements OnInit {
 	@Input() brightness: number;
-	@Input()
-	get kelvin(): number { return this._kelvin; }
-	set kelvin(value: number) {
-		this._rgb = chroma.temperature(value).rgb();
-		this._kelvin = value;
-	}
-	private _kelvin: number;
-	private _rgb: [number, number, number];
+	@Input() kelvin: number;
 
-	get color(): string {
-		return this._alpha(this.brightness);
-	}
+	private _resolution: vec2;
 
-	get mainColor(): string {
-		return this._alpha(Math.min(this.brightness * 2, 1));
-	}
+	private readonly _background: vec3 =
+		chroma("#141419")
+			.rgb(false)
+			.map(channel => channel / 255) as vec3;
 
-	get glow(): string|null {
-		let size = 8 * this.brightness;
-		let innerSize = Math.max(size * 2, 8);
-		let innerBright = Math.min(this.brightness * 2, 1);
-
-		return `
-			0 0 ${innerSize}px 0 ${this._alpha(innerBright)},
-			0 0 ${innerSize}px 0 ${this._alpha(innerBright)},
-			0 0 ${size * 6}px ${size * 2}px ${this.color},
-			0 0 ${size * 12}px ${size * 4}px ${this._alpha(this.brightness / 2)},
-			0 0 ${size * 24}px ${size * 8}px ${this._alpha(this.brightness / 1.5)}
-		`
-			.trim()
-			.replace(/\s+/g, " ");
+	private get _baseColor(): vec3 {
+		return (chroma
+			.temperature(this.kelvin)
+			.rgb(false)
+			.map(channel => channel / 255)
+		) as vec3;
 	}
 
-	private _alpha(a: number): string {
-		let [r,g,b] = this._rgb;
-		return `rgba(${r},${g},${b},${a})`;
+	@ViewChild("canvasRef", { static: true })
+	private _canvasRef: ElementRef<HTMLCanvasElement>;
+	private get _canvas() { return this._canvasRef.nativeElement; }
+
+	private _shader: Shader<LightVizAttributes, LightVizUniforms>;
+	private _buffer: WebGLBuffer;
+
+	constructor(
+		private _elementRef: ElementRef<HTMLElement>,
+	) {}
+
+	ngOnInit(): void {
+		this._updateResolution();
+
+		let gl = createContext(this._canvas, { antialias: true });
+		this._shader = loadShader(gl, vert, frag);
+		this._buffer = gl.createBuffer();
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+			-1,  1,  0,
+			-1, -1,  0,
+			 1,  1,  0,
+			-1, -1,  0,
+			 1,  1,  0,
+			 1, -1,  0,
+		]), gl.STATIC_DRAW);
+	}
+
+	@Loop render(): void {
+		let gl = this._shader.gl;
+		this._shader.bind();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer);
+
+		this._shader.attributes.a_position.pointer();
+		this._shader.uniforms.u_resolution = this._resolution;
+		this._shader.uniforms.u_randomSeed = [
+			Math.random() * this._resolution[0],
+			Math.random() * this._resolution[1],
+		];
+		this._shader.uniforms.u_background = this._background;
+		this._shader.uniforms.u_baseColor = this._baseColor;
+		this._shader.uniforms.u_brightness = this.brightness;
+
+		gl.drawArrays(gl.TRIANGLES, 0, 6);
+	}
+
+	@HostListener("window:resize")
+	private _updateResolution(): void {
+		let { clientWidth, clientHeight } = this._elementRef.nativeElement;
+		let scale = window.devicePixelRatio;
+		let resolution = [
+			clientWidth * scale,
+			clientHeight * scale,
+		];
+		this._canvas.width = resolution[0];
+		this._canvas.height = resolution[1];
+		this._resolution = resolution as vec2;
 	}
 }
