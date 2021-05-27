@@ -56,12 +56,6 @@ void main() {
 	);
 	halo = clamp( halo, 0.0, 1.0 );
 
-	// Tight glow right around the bulb
-	float haloTight = remap( distFromCenter(),
-		v_bulbRadius, v_bulbRadius + 0.075,
-		0.75, 0.0 );
-	haloTight = clamp( haloTight, 0.0, 1.0 );
-
 	// Helper variables
 	vec3 minVal = vec3(0.0);
 	vec3 maxVal = u_baseColor * u_brightness;
@@ -75,14 +69,26 @@ void main() {
 	// Exponential radial gradient from center point
 	float haloExp = pow( halo, remap( pow( u_brightness, 0.5 ),
 		0.0, 1.0,
-		2.0, 2.0 ) );
-	vec3 colorExp = u_baseColor * haloExp * pow( u_brightness, 0.75 );
-	vec3 colorHalo = u_baseColor * pow( haloTight, 3.0 ) * pow( u_brightness, 0.1 );
+		1.0, 2.0 ) );
+	vec3 colorExp = u_baseColor * haloExp * pow( u_brightness, 0.25 );
+
+	// Tight glow right around the bulb
+	float haloTight = remap( distFromCenter(),
+		v_bulbRadius, v_bulbRadius + remap( u_brightness,
+			0.0, 1.0,
+			0.05, 0.5 ),
+		0.75, 0.0 );
+	haloTight = clamp( haloTight, 0.0, 1.0 );
+	vec3 colorHalo = u_baseColor
+		* pow( haloTight, remap( u_brightness,
+			0.0, 1.0,
+			6.0, 3.0 ) )
+		* pow( u_brightness, 0.05 );
 
 	// Add the layers together
 	vec3 color = remap(
 		( u_background + color1 + colorExp + colorHalo ),
-		u_background, ( vec3(1.5) + u_background ),
+		u_background, ( vec3(0.555) + avg( u_baseColor ) + u_background ),
 		u_background, vec3(1.0) );
 
 	// Clamp the darkest pixels to the background color
