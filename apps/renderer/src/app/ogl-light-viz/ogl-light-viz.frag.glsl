@@ -70,7 +70,7 @@ void main() {
 	float haloExp = pow( halo, remap( pow( u_brightness, 0.5 ),
 		0.0, 1.0,
 		1.0, 2.0 ) );
-	vec3 colorExp = u_baseColor * haloExp * pow( u_brightness, 0.25 );
+	vec3 colorExp = u_baseColor * haloExp * pow( u_brightness, 0.175 );
 
 	// Tight glow right around the bulb
 	float haloTight = remap( distFromCenter(),
