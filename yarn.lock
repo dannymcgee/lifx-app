@@ -1766,6 +1766,30 @@
     merge-source-map "^1.1.0"
     schema-utils "^2.7.0"
 
+"@lifx/channels@file:./dist/libs/webgl/channels":
+  version "1.0.0"
+
+"@lifx/colorizeRange@file:./dist/libs/webgl/colorizeRange":
+  version "1.0.0"
+
+"@lifx/debugNegatives@file:./dist/libs/webgl/debugNegatives":
+  version "1.0.0"
+
+"@lifx/debugRange@file:./dist/libs/webgl/debugRange":
+  version "1.0.0"
+
+"@lifx/invLerp@file:./dist/libs/webgl/invLerp":
+  version "1.0.0"
+
+"@lifx/lerp@file:./dist/libs/webgl/lerp":
+  version "1.0.0"
+
+"@lifx/plot@file:./dist/libs/webgl/plot":
+  version "1.0.0"
+
+"@lifx/remap@file:./dist/libs/webgl/remap":
+  version "1.0.0"
+
 "@malept/cross-spawn-promise@^1.1.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@malept/cross-spawn-promise/-/cross-spawn-promise-1.1.1.tgz#504af200af6b98e198bce768bc1730c6936ae01d"

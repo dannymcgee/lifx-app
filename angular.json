@@ -256,6 +256,31 @@
 					}
 				}
 			}
+		},
+		"webgl": {
+			"root": "libs/webgl",
+			"sourceRoot": "libs/webgl/src",
+			"projectType": "library",
+			"architect": {
+				"test": {
+					"builder": "@nrwl/jest:jest",
+					"outputs": ["coverage/libs/webgl"],
+					"options": {
+						"jestConfig": "libs/webgl/jest.config.js",
+						"passWithNoTests": true
+					}
+				},
+				"build": {
+					"builder": "./tools/builders/webgl:build",
+					"outputs": ["{options.outputPath}"],
+					"options": {
+						"outputPath": "dist/libs/webgl",
+						"tsConfig": "libs/webgl/tsconfig.lib.json",
+						"main": "libs/webgl/src/index.ts",
+						"assets": []
+					}
+				}
+			}
 		}
 	}
 }

@@ -5,5 +5,6 @@ module.exports = {
 		"<rootDir>/libs/api",
 		"<rootDir>/libs/std",
 		"<rootDir>/libs/math",
+		"<rootDir>/libs/webgl",
 	],
 };

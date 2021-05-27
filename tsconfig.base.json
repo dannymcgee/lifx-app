@@ -21,7 +21,8 @@
 		"paths": {
 			"@lifx/api": ["libs/api/src/index.ts"],
 			"@lifx/std": ["libs/std/src/index.ts"],
-			"@lifx/math": ["libs/math/src/index.ts"]
+			"@lifx/math": ["libs/math/src/index.ts"],
+			"@lifx/webgl": ["libs/webgl/src/index.ts"]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]
