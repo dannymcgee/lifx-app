@@ -27,10 +27,23 @@ float distFromCenter() {
 }
 
 vec3 bulbSphere() {
-	if ( distFromCenter() < v_bulbRadius)
+	float dist = distFromCenter();
+
+	// The bulb itself
+	if ( dist < v_bulbRadius)
 		return u_baseColor;
 
-	return vec3(0.0);
+	// Bloom-y glow effect around the bulb
+	else if ( dist < v_bulbRadius + 0.05 ) {
+		float glowFactor = remap( dist,
+			v_bulbRadius, v_bulbRadius + 0.05,
+			0.75, 0.0
+		);
+		return pow( glowFactor, 5.0 ) * u_baseColor;
+	}
+
+	// Outside the bloom radius
+	else return vec3( 0.0 );
 }
 
 float ease( float val, float exp ) {
@@ -98,7 +111,7 @@ void main() {
 		max( color.b, u_background.b ) );
 
 	vec3 bulb = bulbSphere();
-	color += bulb * pow( u_brightness, 0.5 );
+	color += bulb * pow( u_brightness, 0.1 );
 	color += ( random( gl_FragCoord.xy / u_randomSeed ) * 0.036 );
 
 	gl_FragColor = vec4( color, 1.0 );

@@ -13,5 +13,5 @@ void main() {
 
 	v_uv = a_position.xy;
 	v_sideLength = max( u_resolution.x, u_resolution.y );
-	v_bulbRadius = ( v_sideLength / 50.0 ) / v_sideLength;
+	v_bulbRadius = ( v_sideLength / 72.0 ) / v_sideLength;
 }

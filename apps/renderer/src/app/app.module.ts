@@ -21,8 +21,8 @@ import { ColorComponent } from "./color/color.component";
 import { IconToggleComponent } from "./icon-toggle/icon-toggle.component";
 import { KnobComponent } from './knob/knob.component';
 // import { CssLightVizComponent } from "./css-light-viz/css-light-viz.component";
-import { LogoComponent } from "./logo/logo.component";
 import { LightVizComponent } from './light-viz/light-viz.component';
+import { LogoComponent } from "./logo/logo.component";
 import { ScheduleComponent } from './schedule/schedule.component';
 import { TitlebarComponent } from './titlebar/titlebar.component';
 
@@ -46,8 +46,8 @@ import { TitlebarComponent } from './titlebar/titlebar.component';
 		// CssLightVizComponent,
 		IconToggleComponent,
 		KnobComponent,
-		LogoComponent,
 		LightVizComponent,
+		LogoComponent,
 		ScheduleComponent,
 		TitlebarComponent,
 	],
