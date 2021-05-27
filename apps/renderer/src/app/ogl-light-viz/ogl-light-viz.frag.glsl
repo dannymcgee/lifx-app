@@ -1,9 +1,13 @@
 precision highp float;
 
 #pragma glslify: remap = require(@lifx/remap)
+#pragma glslify: debugRange = require(@lifx/debugRange)
 
 varying vec2 v_uv;
+varying float v_shortSide;
+varying float v_bulbRadius;
 
+uniform vec2 u_resolution;
 uniform vec3 u_baseColor;
 uniform vec3 u_background;
 uniform float u_brightness;
@@ -13,32 +17,70 @@ float avg( vec3 vec ) {
 	return ( vec.x + vec.y + vec.z ) / 3.0;
 }
 
+float distFromCenter() {
+	float distX = (( u_resolution.x / 2.0 ) - gl_FragCoord.x ) / v_shortSide;
+	float distY = (( u_resolution.y / 2.0 ) - gl_FragCoord.y ) / v_shortSide;
+
+	return length( vec2(distX, distY) );
+}
+
+vec3 bulbSphere() {
+	if ( distFromCenter() < v_bulbRadius)
+		return u_baseColor;
+
+	return vec3(0.0);
+}
+
+float ease( float val, float exp ) {
+	float divisor = pow( val, exp );
+	float dividend = divisor + pow( 1.0 - val, exp );
+
+	return divisor / dividend;
+}
+
 void main() {
 	// Distance from viewport center
-	float dist = 1.0 - distance( v_uv, vec2(0.0) );
-	// Remapped to remove negatives
-	dist = remap( dist,
-		-0.5, 1.0,
-		0.0, 1.0 );
+	float dist = 1.0 - distFromCenter();
+
+	// Base glow
+	float halo = remap( dist,
+		remap( u_brightness,
+			0.0, 1.0,
+			0.75, 0.25 ),
+		1.0,
+		0.0, remap( u_brightness,
+			0.0, 1.0,
+			0.5, 1.0 )
+	);
+	halo = clamp( halo, 0.0, 1.0 );
+
+	// Tight glow right around the bulb
+	float haloTight = remap( distFromCenter(),
+		v_bulbRadius, v_bulbRadius + 0.075,
+		0.75, 0.0 );
+	haloTight = clamp( haloTight, 0.0, 1.0 );
 
 	// Helper variables
 	vec3 minVal = vec3(0.0);
 	vec3 maxVal = u_baseColor * u_brightness;
 
-	// Linear radial gradient from center point
-	vec3 colorLin = u_baseColor * dist * u_brightness;
-	// Dimmed
+	// Dimmed linear radial gradient from center point
+	vec3 colorLin = u_baseColor * halo * pow( u_brightness, 0.5 );
 	vec3 color1 = remap( colorLin,
 		minVal, maxVal,
-		minVal, ( maxVal * 0.15 ));
+		minVal, ( maxVal * 0.333 ));
 
 	// Exponential radial gradient from center point
-	float distExp = pow( dist, 6.0 );
-	vec3 colorExp = u_baseColor * distExp * u_brightness;
+	float haloExp = pow( halo, remap( u_brightness,
+		0.0, 1.0,
+		12.0, 6.0 ) );
+	vec3 colorExp = u_baseColor * haloExp * pow( u_brightness, 0.75 );
+	vec3 colorHalo = u_baseColor * pow( haloTight, 3.0 ) * pow( u_brightness, 0.1 );
 
-	// Add the dimmed linear + exponential gradients together
-	vec3 color = remap(( u_background + color1 + colorExp ),
-		u_background, ( vec3(1.15) + u_background ),
+	// Add the layers together
+	vec3 color = remap(
+		( u_background + color1 + colorExp + colorHalo ),
+		u_background, ( vec3(1.5) + u_background ),
 		u_background, vec3(1.0) );
 
 	// Clamp the darkest pixels to the background color
@@ -47,9 +89,8 @@ void main() {
 		max( color.g, u_background.g ),
 		max( color.b, u_background.b ) );
 
-	// color = debugRange( color );
-	// float line = plot( avg(color) );
-	// color = color + line*vec3(0.0,1.0,0.0);
+	vec3 bulb = bulbSphere();
+	color += bulb * pow( u_brightness, 0.5 );
 
 	gl_FragColor = vec4( color, 1.0 );
 }

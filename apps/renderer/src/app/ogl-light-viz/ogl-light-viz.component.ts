@@ -1,6 +1,7 @@
 import {
 	Component,
 	ElementRef,
+	HostListener,
 	Input,
 	OnInit,
 	ViewChild,
@@ -19,6 +20,7 @@ type LightVizAttributes = Attributes<{
 }>
 
 interface LightVizUniforms {
+	u_resolution: vec2;
 	u_baseColor: vec3;
 	u_background: vec3;
 	u_brightness: float;
@@ -46,6 +48,8 @@ export class OglLightVizComponent implements OnInit {
 	@Input() brightness: number;
 	@Input() kelvin: number;
 
+	private _resolution: vec2;
+
 	private readonly _background: vec3 =
 		chroma("#141419")
 			.rgb(false)
@@ -71,10 +75,7 @@ export class OglLightVizComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		let { clientWidth, clientHeight } = this._elementRef.nativeElement;
-		let scale = window.devicePixelRatio;
-		this._canvas.width = clientWidth * scale;
-		this._canvas.height = clientHeight * scale;
+		this._updateResolution();
 
 		let gl = createContext(this._canvas, { antialias: true });
 		this._shader = loadShader(gl, vert, frag);
@@ -97,10 +98,24 @@ export class OglLightVizComponent implements OnInit {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer);
 
 		this._shader.attributes.a_position.pointer();
+		this._shader.uniforms.u_resolution = this._resolution;
 		this._shader.uniforms.u_background = this._background;
 		this._shader.uniforms.u_baseColor = this._baseColor;
 		this._shader.uniforms.u_brightness = this.brightness;
 
 		gl.drawArrays(gl.TRIANGLES, 0, 6);
+	}
+
+	@HostListener("window:resize")
+	private _updateResolution(): void {
+		let { clientWidth, clientHeight } = this._elementRef.nativeElement;
+		let scale = window.devicePixelRatio;
+		let resolution = [
+			clientWidth * scale,
+			clientHeight * scale,
+		];
+		this._canvas.width = resolution[0];
+		this._canvas.height = resolution[1];
+		this._resolution = resolution as vec2;
 	}
 }
