@@ -19,7 +19,9 @@ export function Loop(
 				this[frameRequest] = requestAnimationFrame(() => {
 					this[methodName].call(this)
 				});
-			}
+			},
+			enumerable: true,
+			configurable: true,
 		},
 		ngOnDestroy: {
 			value(): void {
@@ -28,7 +30,9 @@ export function Loop(
 				if (this[frameRequest]) {
 					cancelAnimationFrame(this[frameRequest]);
 				}
-			}
+			},
+			enumerable: true,
+			configurable: true,
 		},
 	});
 

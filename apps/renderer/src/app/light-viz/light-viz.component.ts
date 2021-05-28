@@ -1,20 +1,22 @@
 import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	HostListener,
 	Input,
-	OnInit,
 	ViewChild,
 } from '@angular/core';
 
 import chroma from "chroma-js";
-import * as createContext from "gl-context";
 import * as loadShader from "gl-shader";
 
 import { PowerLevel } from "@lifx/api";
 import { Loop } from "../utility/loop.decorator";
 import vert from "./light-viz.vert.glsl";
 import frag from "./light-viz.frag.glsl";
+import { Debounce } from "../utility/debounce.decorator";
 
 type LightVizAttributes = Attributes<{
 	a_position: vec3;
@@ -31,7 +33,7 @@ interface LightVizUniforms {
 @Component({
 	selector: 'lifx-light-viz',
 	template: `
-		<canvas class="canvas" #canvasRef></canvas>
+		<canvas *ngIf="_renderCanvas" class="canvas" #canvasRef></canvas>
 	`,
 	styles: [`
 		:host {
@@ -45,11 +47,14 @@ interface LightVizUniforms {
 
 		}
 	`],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LightVizComponent implements OnInit {
+export class LightVizComponent implements AfterViewInit {
 	@Input() powerLevel: PowerLevel;
 	@Input() brightness: number;
 	@Input() kelvin: number;
+
+	_renderCanvas = true;
 
 	private _resolution: vec2;
 
@@ -72,7 +77,7 @@ export class LightVizComponent implements OnInit {
 		return this.brightness;
 	}
 
-	@ViewChild("canvasRef", { static: true })
+	@ViewChild("canvasRef")
 	private _canvasRef: ElementRef<HTMLCanvasElement>;
 	private get _canvas() { return this._canvasRef.nativeElement; }
 
@@ -80,25 +85,13 @@ export class LightVizComponent implements OnInit {
 	private _buffer: WebGLBuffer;
 
 	constructor(
+		private _changeDetector: ChangeDetectorRef,
 		private _elementRef: ElementRef<HTMLElement>,
 	) {}
 
-	ngOnInit(): void {
-		this._updateResolution();
-
-		let gl = createContext(this._canvas, { antialias: true });
-		this._shader = loadShader(gl, vert, frag);
-		this._buffer = gl.createBuffer();
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-			-1,  1,  0,
-			-1, -1,  0,
-			 1,  1,  0,
-			-1, -1,  0,
-			 1,  1,  0,
-			 1, -1,  0,
-		]), gl.STATIC_DRAW);
+	ngAfterViewInit(): void {
+		this._setResolution();
+		this._initWebGL();
 	}
 
 	@Loop render(): void {
@@ -120,15 +113,48 @@ export class LightVizComponent implements OnInit {
 	}
 
 	@HostListener("window:resize")
-	private _updateResolution(): void {
+	@Debounce(33)
+	onResize(): void {
+		this._shader.dispose();
+		this._buffer = null;
+		this._recreateCanvas();
+		this._setResolution();
+		this._initWebGL();
+	}
+
+	private _setResolution(): void {
 		let { clientWidth, clientHeight } = this._elementRef.nativeElement;
 		let scale = window.devicePixelRatio;
 		let resolution = [
 			clientWidth * scale,
 			clientHeight * scale,
 		];
+
 		this._canvas.width = resolution[0];
 		this._canvas.height = resolution[1];
 		this._resolution = resolution as vec2;
+	}
+
+	private _initWebGL(): void {
+		let gl = this._canvas.getContext("webgl", { antialias: true });
+		this._shader = loadShader(gl, vert, frag);
+		this._buffer = gl.createBuffer();
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+			-1,  1,  0,
+			-1, -1,  0,
+			 1,  1,  0,
+			-1, -1,  0,
+			 1,  1,  0,
+			 1, -1,  0,
+		]), gl.STATIC_DRAW);
+	}
+
+	private _recreateCanvas(): void {
+		this._renderCanvas = false;
+		this._changeDetector.detectChanges();
+		this._renderCanvas = true;
+		this._changeDetector.detectChanges();
 	}
 }

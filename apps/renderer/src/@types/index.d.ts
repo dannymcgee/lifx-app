@@ -29,4 +29,11 @@ declare interface Shader<
 	uniforms: U;
 	gl: WebGLRenderingContext;
 	bind(): void;
+	update(
+		vertSrc: string,
+		fragSrc: string,
+		uniforms?: U,
+		attributes?: A,
+	): void;
+	dispose(): void;
 }
