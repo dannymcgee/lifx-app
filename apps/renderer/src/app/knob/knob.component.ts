@@ -23,7 +23,7 @@ import {
 } from "rxjs/operators";
 
 import { clamp, remap, Stepper, Vec2 } from "@lifx/math";
-import { Coerce } from "../utility/coerce.decorator";
+import { Coerce } from "../decorators";
 
 enum Delta {
 	Inc = 1,

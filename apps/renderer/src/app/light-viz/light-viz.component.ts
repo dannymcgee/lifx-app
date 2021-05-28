@@ -13,10 +13,9 @@ import chroma from "chroma-js";
 import * as loadShader from "gl-shader";
 
 import { PowerLevel } from "@lifx/api";
-import { Loop } from "../utility/loop.decorator";
+import { Debounce, Loop } from "../decorators";
 import vert from "./light-viz.vert.glsl";
 import frag from "./light-viz.frag.glsl";
-import { Debounce } from "../utility/debounce.decorator";
 
 type LightVizAttributes = Attributes<{
 	a_position: vec3;

@@ -20,7 +20,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { fromEvent, interval, merge } from "rxjs";
 import { filter, first, takeUntil } from "rxjs/operators";
 
-import { Coerce } from "../utility/coerce.decorator";
+import { Coerce } from "../decorators";
 
 @Component({
 	selector: "lifx-icon-toggle",

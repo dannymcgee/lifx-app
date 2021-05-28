@@ -12,7 +12,7 @@ import {
 import { Observable, Subject } from "rxjs";
 import { map, startWith, takeUntil } from "rxjs/operators";
 
-import { Coerce } from "../coerce.decorator";
+import { Coerce } from "../decorators";
 
 
 @Component({

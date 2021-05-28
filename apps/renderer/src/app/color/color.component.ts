@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, HostBinding, Input, ViewEncapsulation } f
 import { NgControl } from "@angular/forms";
 
 import { HSBK, Kelvin, u16, U16_MAX } from "@lifx/api";
-import { Coerce } from "../utility/coerce.decorator";
+import { Coerce } from "../decorators";
 import { FormControl } from "../types";
 
 @Component({
