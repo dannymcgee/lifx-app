@@ -3,7 +3,6 @@ use std::{
 	net::SocketAddr,
 	time::{Duration, Instant},
 };
-use lifx::PowerLevel;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -23,6 +22,7 @@ pub enum Channel {
 	Discovery,
 	GetColor,
 	SetColor,
+	SetPowerLevel,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -31,6 +31,10 @@ pub enum RequestPayload {
 	SetColor {
 		values: HashMap<u64, HSBK>,
 		duration: Duration,
+	},
+	SetPowerLevel {
+		id: u64,
+		level: PowerLevel,
 	},
 }
 
@@ -42,6 +46,7 @@ pub enum ResponsePayload {
 		color: HSBK,
 	},
 	SetColor(Vec<String>),
+	SetPowerLevel(String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -68,8 +73,8 @@ impl From<&lifx::udp::Bulb> for Bulb {
 			group: other.group.data.clone(),
 			name: other.name.data.clone(),
 			power_level: match other.power_level.data {
-				Some(PowerLevel::Standby) => Some(false),
-				Some(PowerLevel::Enabled) => Some(true),
+				Some(lifx::PowerLevel::Standby) => Some(false),
+				Some(lifx::PowerLevel::Enabled) => Some(true),
 				None => None,
 			},
 			color: other.color.clone().into(),
@@ -145,4 +150,11 @@ impl From<HSBK> for lifx::HSBK {
 			kelvin: other.kelvin,
 		}
 	}
+}
+
+#[repr(u16)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
+pub enum PowerLevel {
+	Standby = 0,
+	Enabled = 65535,
 }

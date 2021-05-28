@@ -24,6 +24,13 @@
 			</div>
 
 			<div class="lifx-group__toolbar">
+				<lifx-power-toggle class="lifx-group__power-level"
+					[id]="group"
+					[disabled]="!groupLocks[group]"
+					[(powerLevel)]="groupPowerLevels[group]"
+					(powerLevelChange)="setGroupPowerLevel(group, $event)"
+				></lifx-power-toggle>
+
 				<lifx-color class="lifx-group__color"
 					[id]="group"
 					size="32"
@@ -50,6 +57,7 @@
 		<lifx-light-viz class="lifx-group__light-viz"
 			*ngIf="groupLocks[group]
 			else unsyncedTemplate"
+			[powerLevel]="groupPowerLevels[group]"
 			[brightness]="groupColors[group]?.brightness | u16toFloat"
 			[kelvin]="$any(groupColors[group])?.kelvin"
 		></lifx-light-viz>

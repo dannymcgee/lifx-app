@@ -16,7 +16,8 @@ namespace ipc {
 		ipcMain.handle(Channel.Discovery, () => {
 			return pipe
 				.send(Channel.Discovery)
-				.recv(Channel.Discovery).toPromise();
+				.recv(Channel.Discovery)
+				.toPromise();
 		});
 
 		ipcMain.handle(Channel.GetColor, (_, payload) => {
@@ -39,6 +40,13 @@ namespace ipc {
 					first(),
 				).toPromise();
 		});
+
+		ipcMain.handle(Channel.SetPowerLevel, (_, payload) => {
+			return pipe
+				.send(Channel.SetPowerLevel, payload)
+				.recv(Channel.SetPowerLevel)
+				.toPromise();
+		})
 	}
 
 }

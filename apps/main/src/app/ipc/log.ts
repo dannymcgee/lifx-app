@@ -1,3 +1,4 @@
+import util from "util";
 import { Instance as Chalk } from "chalk";
 import { Channel, Request, Response } from "@lifx/api";
 
@@ -25,12 +26,34 @@ namespace log {
 		process.stdout.write(result.trim() + "\r");
 	}
 
+	export function error(msg: string, data?: any) {
+		console.log(util.inspect(chalk));
+		if (!chalk) {
+			process.stderr.write("What the fuck?");
+			return;
+		}
+		let result = chalk.bold.redBright.inverse(" ERROR ");
+		result += ` ${msg} `;
+
+		if (data instanceof Error && data.stack)
+			result += chalk.dim(data.stack
+				.split("\n")
+				.slice(1)
+				.join("\n"));
+
+		else if (data !== undefined)
+			result += pretty(data);
+
+		process.stdout.write(result.trim() + "\r");
+	}
+
 	function ch(channel: Channel) {
 		let color: typeof chalk;
 		switch (channel) {
-			case Channel.Discovery: { color = chalk.yellow;    break; }
-			case Channel.GetColor:  { color = chalk.blueBright; break; }
-			case Channel.SetColor:  { color = chalk.cyan;       break; }
+			case Channel.Discovery:     { color = chalk.yellow;     break; }
+			case Channel.GetColor:      { color = chalk.blueBright; break; }
+			case Channel.SetColor:      { color = chalk.blueBright; break; }
+			case Channel.SetPowerLevel: { color = chalk.green;      break; }
 		}
 		return color.bold.inverse(` ${channel} `);
 	}

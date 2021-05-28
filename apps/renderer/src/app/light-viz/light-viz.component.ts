@@ -11,6 +11,7 @@ import chroma from "chroma-js";
 import * as createContext from "gl-context";
 import * as loadShader from "gl-shader";
 
+import { PowerLevel } from "@lifx/api";
 import { Loop } from "../utility/loop.decorator";
 import vert from "./light-viz.vert.glsl";
 import frag from "./light-viz.frag.glsl";
@@ -46,6 +47,7 @@ interface LightVizUniforms {
 	`],
 })
 export class LightVizComponent implements OnInit {
+	@Input() powerLevel: PowerLevel;
 	@Input() brightness: number;
 	@Input() kelvin: number;
 
@@ -62,6 +64,12 @@ export class LightVizComponent implements OnInit {
 			.rgb(false)
 			.map(channel => channel / 255)
 		) as vec3;
+	}
+
+	private get _brightness() {
+		if (this.powerLevel === PowerLevel.StandBy)
+			return 0;
+		return this.brightness;
 	}
 
 	@ViewChild("canvasRef", { static: true })
@@ -106,7 +114,7 @@ export class LightVizComponent implements OnInit {
 		];
 		this._shader.uniforms.u_background = this._background;
 		this._shader.uniforms.u_baseColor = this._baseColor;
-		this._shader.uniforms.u_brightness = this.brightness;
+		this._shader.uniforms.u_brightness = this._brightness;
 
 		gl.drawArrays(gl.TRIANGLES, 0, 6);
 	}

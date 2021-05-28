@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { map, shareReplay, takeUntil } from "rxjs/operators";
 
-import { Bulb, HSBK } from "@lifx/api";
+import { Bulb, HSBK, PowerLevel } from "@lifx/api";
 import { sleep } from "@lifx/std";
 
 @Injectable({
@@ -37,6 +37,10 @@ export class LifxService implements OnDestroy {
 
 	async setColors(targets: Record<string, HSBK>, seconds: number) {
 		await electron.setColor(targets, seconds);
+	}
+
+	async setPowerLevel(id: string, powerLevel: PowerLevel) {
+		await electron.setPowerLevel(id, powerLevel);
 	}
 
 	private _initBulbs() {

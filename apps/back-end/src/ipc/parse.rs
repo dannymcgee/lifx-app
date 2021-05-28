@@ -1,23 +1,25 @@
 use std::time::Duration;
 use serde_json::Value;
 
-use crate::ipc::{Channel, HSBK, Request, RequestPayload};
+use crate::ipc::{Channel, HSBK, PowerLevel, Request, RequestPayload};
 
 pub fn parse(input: &str) -> Request {
 	let req: Value = serde_json::from_str(input).unwrap();
 
 	let channel = match &req["channel"] {
-		Value::String(ch) if ch == "Discovery" => Channel::Discovery,
-		Value::String(ch) if ch == "GetColor"  => Channel::GetColor,
-		Value::String(ch) if ch == "SetColor"  => Channel::SetColor,
+		Value::String(ch) if ch == "Discovery"     => Channel::Discovery,
+		Value::String(ch) if ch == "GetColor"      => Channel::GetColor,
+		Value::String(ch) if ch == "SetColor"      => Channel::SetColor,
+		Value::String(ch) if ch == "SetPowerLevel" => Channel::SetPowerLevel,
 		other => panic!("Expected channel, received {:?}", other),
 	};
 
 	let p = req.get("payload");
 	let payload = match channel {
-		Channel::Discovery => parse_discovery_payload(p),
-		Channel::GetColor  => parse_get_color_payload(p),
-		Channel::SetColor  => parse_set_color_payload(p),
+		Channel::Discovery      => parse_discovery_payload(p),
+		Channel::GetColor       => parse_get_color_payload(p),
+		Channel::SetColor       => parse_set_color_payload(p),
+		Channel::SetPowerLevel  => parse_set_power_level_payload(p),
 	};
 
 	Request { channel, payload }
@@ -67,6 +69,16 @@ fn parse_set_color_payload(value: Option<&Value>) -> Option<RequestPayload> {
 	})
 }
 
+fn parse_set_power_level_payload(value: Option<&Value>) -> Option<RequestPayload> {
+	use Value::Object;
+	let payload = if let Some(Object(obj)) = value { obj } else { panic!() };
+
+	let id = parse_id(payload.get("id"));
+	let level = coerce_power_level(payload.get("level"));
+
+	Some(RequestPayload::SetPowerLevel { id, level })
+}
+
 fn parse_duration(value: Option<&Value>) -> Duration {
 	use Value::{Object, Number};
 	let obj = match value {
@@ -110,5 +122,17 @@ fn coerce_u16(value: Option<&Value>) -> u16 {
 		Some(Value::Number(v)) => v.as_u64().unwrap() as u16,
 		Some(Value::Null) | None => 0,
 		other => panic!("Expected u16, null, or undefined, received {:?}", other),
+	}
+}
+
+fn coerce_power_level(value: Option<&Value>) -> PowerLevel {
+	use Value::Number;
+	if let Some(Number(v)) = value {
+		match v.as_u64().unwrap() {
+			0 => PowerLevel::Standby,
+			_ => PowerLevel::Enabled,
+		}
+	} else {
+		panic!("Expected PowerLevel, received {:?}", value.unwrap());
 	}
 }

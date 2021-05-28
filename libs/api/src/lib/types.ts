@@ -7,6 +7,7 @@ export enum Channel {
 	Discovery = "Discovery",
 	GetColor = "GetColor",
 	SetColor = "SetColor",
+	SetPowerLevel = "SetPowerLevel",
 }
 
 export enum PowerLevel {
@@ -52,6 +53,10 @@ export interface Request {
 			secs: number;
 		};
 	};
+	[Channel.SetPowerLevel]?: {
+		id: string;
+		level: PowerLevel;
+	};
 }
 
 export interface Response {
@@ -61,6 +66,7 @@ export interface Response {
 		color: HSBK;
 	};
 	[Channel.SetColor]?: string[];
+	[Channel.SetPowerLevel]?: string;
 }
 
 export interface ElectronIPC {
@@ -69,6 +75,7 @@ export interface ElectronIPC {
 	discovery(): Promise<Bulb[]>;
 	getColor(id: string): Promise<HSBK>;
 	setColor(targets: Record<string, HSBK>, seconds: number): Promise<void>;
+	setPowerLevel(id: string, level: PowerLevel): Promise<void>;
 	closeWindow(): void;
 	minimizeWindow(): void;
 	toggleMaximized(): Promise<boolean>;

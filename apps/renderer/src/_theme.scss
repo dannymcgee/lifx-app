@@ -195,6 +195,7 @@ $lifx-theme: mat-dark-theme((
 
 @include angular-material-theme($lifx-theme);
 @include mat-button-color($lifx-theme);
+@include mat-slide-toggle-color($lifx-theme);
 @include mat-tooltip-color($lifx-theme);
 
 @include lifx-app-theme($lifx-theme);

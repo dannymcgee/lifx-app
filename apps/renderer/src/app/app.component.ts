@@ -9,7 +9,7 @@ import {
 import { combineLatest, interval, Observable, Subject } from "rxjs";
 import { first, scan, share, takeUntil } from "rxjs/operators";
 
-import { Bulb, HSBK } from "@lifx/api";
+import { Bulb, HSBK, PowerLevel } from "@lifx/api";
 import { LifxService } from "./lifx.service";
 
 @Component({
@@ -26,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	groupLocks: Record<string, boolean> = {};
 	groupScheduleEnabled: Record<string, boolean> = {};
 	groupColors: Record<string, HSBK> = {};
+	groupPowerLevels: Record<string, PowerLevel> = {};
 
 	stops = ["#AD5910", "#2244FF"];
 
@@ -76,14 +77,22 @@ export class AppComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._onDestroy$))
 			.subscribe(([groups, bulbs]) => {
 				groups.forEach(g => {
-					if (this.groupColors[g]) return;
+					if (!this.groupColors[g]) {
+						let color: HSBK = bulbs[g]?.reduce((acc, b) => {
+							if (b.color) return b.color;
+							else return acc as any;
+						}, null);
 
-					let color: HSBK = bulbs[g]?.reduce((acc, b) => {
-						if (b.color) return b.color;
-						else return acc as any;
-					}, null);
+						this.groupColors[g] = color;
+					}
+					if (this.groupPowerLevels[g] == null) {
+						let powerLevel: PowerLevel = bulbs[g]?.reduce((acc, b) => {
+							if (b.powerLevel != null) return b.powerLevel;
+							else return acc as any;
+						}, null);
 
-					this.groupColors[g] = color;
+						this.groupPowerLevels[g] = powerLevel;
+					}
 				});
 			});
 
@@ -114,6 +123,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
 		this.groupColors[group] = { ...color };
 		this._lifx.setColors(targets, 0.25);
+	}
+
+	async setGroupPowerLevel(group: string, powerLevel: PowerLevel) {
+		let bulbIds = (await this.bulbs$
+			.pipe(share(), first())
+			.toPromise())
+			[group]
+			?.map(b => b.id);
+
+		for (let id of bulbIds) {
+			await this._lifx.setPowerLevel(id, powerLevel);
+		}
 	}
 
 	schedule() {}

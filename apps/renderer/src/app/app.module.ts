@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatRippleModule } from "@angular/material/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 // Child Modules
@@ -23,6 +24,7 @@ import { KnobComponent } from './knob/knob.component';
 // import { CssLightVizComponent } from "./css-light-viz/css-light-viz.component";
 import { LightVizComponent } from './light-viz/light-viz.component';
 import { LogoComponent } from "./logo/logo.component";
+import { PowerToggleComponent } from './power-toggle/power-toggle.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { TitlebarComponent } from './titlebar/titlebar.component';
 
@@ -35,6 +37,7 @@ import { TitlebarComponent } from './titlebar/titlebar.component';
 		MatButtonModule,
 		MatIconModule,
 		MatRippleModule,
+		MatSlideToggleModule,
 		MatTooltipModule,
 		UtilityModule,
 	],
@@ -48,6 +51,7 @@ import { TitlebarComponent } from './titlebar/titlebar.component';
 		KnobComponent,
 		LightVizComponent,
 		LogoComponent,
+		PowerToggleComponent,
 		ScheduleComponent,
 		TitlebarComponent,
 	],

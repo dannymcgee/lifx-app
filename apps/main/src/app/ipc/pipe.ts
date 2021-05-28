@@ -1,7 +1,6 @@
 import { Observable, Subject } from "rxjs";
 import { filter, first, map } from "rxjs/operators";
 import { Readable, Writable } from "stream";
-import chalk from "chalk";
 import cp from "child_process";
 import { promises as fs } from "fs";
 import sub from "date-fns/sub";
@@ -33,12 +32,14 @@ export class IpcPipe {
 		[Channel.Discovery]: new Queue(1),
 		[Channel.GetColor]: new Queue(1),
 		[Channel.SetColor]: new Queue(1),
+		[Channel.SetPowerLevel]: new Queue(1),
 	};
 
 	private _pending: Record<Channel, number> = {
 		[Channel.Discovery]: 0,
 		[Channel.GetColor]: 0,
 		[Channel.SetColor]: 0,
+		[Channel.SetPowerLevel]: 0,
 	};
 
 	private get _allPending(): number {
@@ -92,10 +93,7 @@ export class IpcPipe {
 		});
 
 		this._output.write(msg + "\n", (err?: Error) => {
-			if (err) {
-				console.log(chalk.bold.redBright(err.message));
-				console.log(chalk.bold.red(err.stack));
-			}
+			if (err) log.error(err.message, err);
 		});
 
 		if (env.mock) setTimeout(() => {
@@ -108,6 +106,7 @@ export class IpcPipe {
 	recvAll(channel: Channel.Discovery): Observable<Response[Channel.Discovery]>;
 	recvAll(channel: Channel.GetColor): Observable<Response[Channel.GetColor]>;
 	recvAll(channel: Channel.SetColor): Observable<Response[Channel.SetColor]>;
+	recvAll(channel: Channel.SetPowerLevel): Observable<Response[Channel.SetPowerLevel]>;
 
 	recvAll(chan: any) {
 		return this._input$.pipe(
@@ -119,6 +118,7 @@ export class IpcPipe {
 	recv(channel: Channel.Discovery): Observable<Response[Channel.Discovery]>;
 	recv(channel: Channel.GetColor): Observable<Response[Channel.GetColor]>;
 	recv(channel: Channel.SetColor): Observable<Response[Channel.SetColor]>;
+	recv(channel: Channel.SetPowerLevel): Observable<Response[Channel.SetPowerLevel]>;
 
 	recv(channel: any) {
 		return this.recvAll(channel).pipe(first()) as any;
@@ -196,9 +196,10 @@ export class IpcPipe {
 					color: this._fmtColor(payload[chan].color),
 				};
 			case Channel.SetColor:
+			case Channel.SetPowerLevel:
 				return payload[chan];
 			default: {
-				console.log(chalk.bold.redBright(`Unrecognized channel: ${chan}`));
+				log.error(`Unrecognized channel: ${chan}`);
 			}
 		}
 	}

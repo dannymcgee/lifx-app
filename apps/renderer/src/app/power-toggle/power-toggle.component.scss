@@ -1,0 +1,9 @@
+@import "lib";
+
+.lifx-power-toggle {
+	@include flex(row, center, center);
+
+	&__slide-toggle {
+		transform: rotate(-90deg);
+	}
+}

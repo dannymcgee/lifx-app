@@ -11,7 +11,7 @@ import {
 import { merge, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
-import { Bulb, HSBK } from "@lifx/api";
+import { Bulb, HSBK, PowerLevel } from "@lifx/api";
 import { LifxService } from "../lifx.service";
 
 @Component({
@@ -39,6 +39,13 @@ export class BulbComponent implements OnChanges, OnDestroy {
 	}
 	_color?: HSBK;
 
+	get powerLevel(): PowerLevel { return this._powerLevel; }
+	set powerLevel(value: PowerLevel) {
+		this._powerLevel = value;
+		this._updatePowerLevel(value);
+	}
+	_powerLevel?: PowerLevel;
+
 	private _onDestroy$ = new Subject<void>();
 	private _onChange$ = new Subject<void>();
 
@@ -59,7 +66,10 @@ export class BulbComponent implements OnChanges, OnDestroy {
 					if (!this._color && bulb.color) {
 						this._color = { ...bulb.color as HSBK };
 					}
-				})
+					if (this._powerLevel == null && bulb.powerLevel != null) {
+						this._powerLevel = bulb.powerLevel;
+					}
+				});
 		}
 	}
 
@@ -71,9 +81,9 @@ export class BulbComponent implements OnChanges, OnDestroy {
 
 	private async _updateColor(value: HSBK) {
 		await this._lifx.setColor(this.id, value, 0.25);
-		// try {
-		// 	let updated = await this._lifx.getColor(this.id);
-		// 	this._color = { ...updated };
-		// } catch {}
+	}
+
+	private async _updatePowerLevel(value: PowerLevel) {
+		await this._lifx.setPowerLevel(this.id, value);
 	}
 }

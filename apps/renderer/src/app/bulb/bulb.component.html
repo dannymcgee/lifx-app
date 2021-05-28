@@ -4,16 +4,25 @@
 			{{ name }}
 		</span>
 
-		<lifx-color class="lifx-bulb__color"
-			*ngIf="color && !readOnly"
-			[id]="id"
-			size="28"
-			[(ngModel)]="color"
-		></lifx-color>
+		<div class="lifx-bulb__toolbar">
+			<lifx-power-toggle class="lifx-bulb__power-toggle"
+				*ngIf="!readOnly"
+				[id]="id"
+				[(powerLevel)]="powerLevel"
+			></lifx-power-toggle>
+
+			<lifx-color class="lifx-bulb__color"
+				*ngIf="color && !readOnly"
+				[id]="id"
+				size="28"
+				[(ngModel)]="color"
+			></lifx-color>
+		</div>
 	</div>
 
 	<lifx-light-viz class="lifx-bulb__light-viz"
 		*ngIf="color"
+		[powerLevel]="powerLevel"
 		[brightness]="color.brightness | u16toFloat"
 		[kelvin]="color.kelvin"
 	></lifx-light-viz>

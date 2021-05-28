@@ -1,0 +1,7 @@
+<mat-slide-toggle class="lifx-power-toggle__slide-toggle"
+	color="accent"
+	id="{{ id }}_power-level"
+	[disabled]="disabled"
+	[checked]="powerLevel === PowerLevel.Enabled"
+	(toggleChange)="toggle()"
+></mat-slide-toggle>

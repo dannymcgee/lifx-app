@@ -1,4 +1,5 @@
 use std::{
+	convert::TryInto,
 	io::{self, Write},
 	thread,
 	time::{Duration, Instant},
@@ -35,9 +36,10 @@ fn main() -> Result<()> {
 fn dispatch(input: &str, stdout: &mut io::Stdout, mgr: &mut Manager) -> Result<()> {
 	let req = ipc::parse(input);
 	let res = match req.channel {
-		Channel::Discovery => discovery(mgr),
-		Channel::GetColor  => get_color(mgr, &req.payload.unwrap()),
-		Channel::SetColor  => set_color(mgr, &req.payload.unwrap()),
+		Channel::Discovery      => discovery(mgr),
+		Channel::GetColor       => get_color(mgr, &req.payload.unwrap()),
+		Channel::SetColor       => set_color(mgr, &req.payload.unwrap()),
+		Channel::SetPowerLevel  => set_power_level(mgr, &req.payload.unwrap()),
 	};
 	let res_str = serde_json::to_string(&res)?;
 
@@ -87,5 +89,27 @@ fn set_color(mgr: &mut Manager, msg: &RequestPayload) -> Response {
 	Response {
 		channel: Channel::SetColor,
 		payload: ResponsePayload::SetColor(ids),
+	}
+}
+
+fn set_power_level(mgr: &mut Manager, msg: &RequestPayload) -> Response {
+	let bulbs = mgr.bulbs.lock().expect("Failed to lock bulbs for writing");
+	let (id, level) = if let RequestPayload::SetPowerLevel { id, level } = msg {
+		(id, level)
+	} else {
+		unreachable!()
+	};
+
+	if let Some(bulb) = bulbs.get(id) {
+		bulb
+			.set_power_level((*level as u16).try_into().unwrap())
+			.expect("Failed to set bulb's power level");
+	} else {
+		panic!("Bulb not found with id {}", id);
+	}
+
+	Response {
+		channel: Channel::SetPowerLevel,
+		payload: ResponsePayload::SetPowerLevel(format!("{:#018x}", id)),
 	}
 }

@@ -17,6 +17,9 @@ const api: ElectronIPC = {
 			duration: { secs },
 		});
 	},
+	setPowerLevel(id, level) {
+		return ipcRenderer.invoke(Channel.SetPowerLevel, { id, level });
+	},
 	closeWindow() {
 		return ipcRenderer.invoke("window-close");
 	},
